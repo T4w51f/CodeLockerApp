@@ -28,7 +28,7 @@ public class CodeLock {
     private static String db_password = "cf6f2019a804c631bdd30e05d6ffca6c7ff2565b1749882c01759476492e3ce4";
 
     private static Map<String, Platform> appMap = new HashMap<>();
-    
+
     /***
      * Constructor to create an instance of the CodeLock app user
      * @param firstName non-empty first name string
