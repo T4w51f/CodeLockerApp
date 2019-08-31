@@ -10,7 +10,7 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/appLogo"
         android:layout_width="195dp"
         android:layout_height="232dp"
         android:layout_marginStart="109dp"
@@ -21,9 +21,69 @@
         android:layout_marginBottom="50dp"
         android:background="#00FFFFFF"
         android:clickable="false"
+        android:contentDescription="@string/app_name"
         android:cropToPadding="false"
         android:scaleType="centerInside"
         android:tint="@android:color/white"
         app:srcCompat="@drawable/logo" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textStyle="bold"
+        android:textSize="14pt"
+        android:layout_marginTop="400dp"
+        android:layout_marginStart="34dp"
+        android:inputType="textPersonName"
+        android:background="#ffffff"
+        android:drawableRight="@drawable/ic_username_icon"
+        android:contentDescription="@string/app_name"
+        android:hint="Username" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textStyle="bold"
+        android:textSize="14pt"
+        android:layout_marginTop="480dp"
+        android:layout_marginStart="34dp"
+        android:background="#ffffff"
+        android:inputType="textPassword"
+        android:drawableRight="@drawable/ic_password_icon"
+        android:hint="Password"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="575dp"
+        app:cardBackgroundColor="#ff8a1c"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="56dp"
+                android:layout_marginTop="675dp"
+                android:text="@string/Login"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="#000000"
+                android:textSize="20pt"
+                android:textStyle="bold"
+                android:visibility="visible"
+                tools:text="@string/Login" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
 </RelativeLayout>
 

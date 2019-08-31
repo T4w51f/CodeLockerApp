@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CodeLocker</string>
+    <string name="Login">Login</string>
 </resources>
