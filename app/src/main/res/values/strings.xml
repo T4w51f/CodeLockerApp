@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">CodeLocker</string>
     <string name="Login">Login</string>
+    <string name="Username">Username</string>
+    <string name="Dummy_facebook">Dummy_Facebook</string>
+
 </resources>
