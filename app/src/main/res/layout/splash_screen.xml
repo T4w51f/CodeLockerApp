@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_screen_background"
+
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CodeLocker"
+        android:textSize="22pt"
+        android:layout_marginStart="85dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:layout_marginTop="475dp"/>
+
+    <ImageView
+        android:id="@+id/appLogo"
+        android:layout_width="195dp"
+        android:layout_height="232dp"
+        android:layout_marginStart="109dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="245dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="50dp"
+        android:background="#00FFFFFF"
+        android:clickable="false"
+        android:contentDescription="@string/app_name"
+        android:cropToPadding="false"
+        android:scaleType="centerInside"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/logo" />
+
+</RelativeLayout>
+

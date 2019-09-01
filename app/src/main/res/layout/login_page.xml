@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_screen_background"
+
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CodeLocker"
+        android:textSize="22pt"
+        android:layout_marginStart="85dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:layout_marginTop="265dp"/>
+
+    <ImageView
+        android:id="@+id/appLogo"
+        android:layout_width="195dp"
+        android:layout_height="232dp"
+        android:layout_marginStart="109dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="50dp"
+        android:background="#00FFFFFF"
+        android:clickable="false"
+        android:contentDescription="@string/app_name"
+        android:cropToPadding="false"
+        android:scaleType="centerInside"
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/logo" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textSize="14pt"
+        android:layout_marginTop="350dp"
+        android:layout_marginStart="34dp"
+        android:inputType="textPersonName"
+        android:background="#ffffff"
+        android:drawableRight="@drawable/ic_username_icon"
+        android:contentDescription="@string/app_name"
+        android:hint="Username"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:textSize="14pt"
+        android:layout_marginTop="410dp"
+        android:layout_marginStart="34dp"
+        android:background="#ffffff"
+        android:inputType="textPassword"
+        android:drawableRight="@drawable/ic_password_icon"
+        android:hint="Password"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+
+
+    <!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/LoginButton"-->
+<!--        android:layout_width="300dp"-->
+<!--        android:layout_height="75dp"-->
+<!--        android:layout_marginStart="56dp"-->
+<!--        android:layout_marginTop="575dp"-->
+<!--        app:cardBackgroundColor="#ff8a1c"-->
+<!--        app:cardCornerRadius="25dp"-->
+<!--        app:cardElevation="10dp">-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="140dp"-->
+<!--                android:layout_marginTop="585dp"-->
+<!--                android:text="@string/Login"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textColor="#000000"-->
+<!--                android:textSize="20pt"-->
+<!--                android:textStyle="bold"-->
+<!--                tools:text="@string/Login" />-->
+<!--        </RelativeLayout>-->
+<!--    </androidx.cardview.widget.CardView>-->
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="520dp"
+        android:text="LOGIN"
+        android:textStyle="bold"
+        android:textSize="20pt"
+        android:background="#ff8a1c" />
+
+    <TextView
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register now"
+        android:textSize="8pt"
+        android:layout_marginStart="165dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:layout_marginTop="630dp"/>
+
+    <TextView
+        android:id="@+id/fingerid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use fingerprint instead?"
+        android:textSize="8pt"
+        android:layout_marginStart="125dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:layout_marginTop="465dp"/>
+
+
+</RelativeLayout>
+
