@@ -108,6 +108,7 @@
         android:layout_marginTop="520dp"
         android:text="LOGIN"
         android:textStyle="bold"
+        android:onClick="login"
         android:textSize="20pt"
         android:background="#ff8a1c" />
 
