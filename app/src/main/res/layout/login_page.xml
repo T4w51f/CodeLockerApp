@@ -124,17 +124,6 @@
         android:layout_marginTop="630dp"/>
 
     <TextView
-        android:id="@+id/incorrect_password_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Incorrect password entered"
-        android:textSize="8pt"
-        android:layout_marginStart="110dp"
-        android:textAlignment="center"
-        android:textColor="#fa3333"
-        android:layout_marginTop="455dp"/>
-
-    <TextView
         android:id="@+id/fingerid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

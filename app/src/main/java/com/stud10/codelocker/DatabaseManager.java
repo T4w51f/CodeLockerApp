@@ -53,4 +53,23 @@ public class DatabaseManager {
 
         return (actualPassword.equals(password));
     }
+
+    public static boolean findUsername(String username){
+        int count = 0;
+        String query = "SELECT COUNT(username) FROM app_user WHERE username = \'" + username + "\'";
+        try (Connection con = DriverManager.getConnection(url, user, db_password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                count = rs.getInt(1);
+            }
+            if (count == 1){
+                return true;
+            }
+
+        } catch (SQLException ex) {
+            ex.getStackTrace();
+        }
+        return false;
+    }
 }
