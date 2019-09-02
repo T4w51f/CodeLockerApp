@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.login_page);
     }
 
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public void login(View view) {
         EditText username = (EditText) findViewById(R.id.username);
         EditText password = (EditText) findViewById(R.id.password);
+
         Button log = (Button) findViewById(R.id.login);
         boolean correctPass = DatabaseManager.getPassword(username.getText().toString(), password.getText().toString());
         if(correctPass){
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             }
             counter--;
         }
+
 
     }
 }

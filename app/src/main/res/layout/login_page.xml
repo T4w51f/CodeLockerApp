@@ -105,7 +105,7 @@
         android:layout_width="300dp"
         android:layout_height="75dp"
         android:layout_marginStart="56dp"
-        android:layout_marginTop="520dp"
+        android:layout_marginTop="540dp"
         android:text="LOGIN"
         android:textStyle="bold"
         android:onClick="login"
@@ -124,6 +124,17 @@
         android:layout_marginTop="630dp"/>
 
     <TextView
+        android:id="@+id/incorrect_password_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Incorrect password entered"
+        android:textSize="8pt"
+        android:layout_marginStart="110dp"
+        android:textAlignment="center"
+        android:textColor="#fa3333"
+        android:layout_marginTop="455dp"/>
+
+    <TextView
         android:id="@+id/fingerid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -132,8 +143,7 @@
         android:layout_marginStart="125dp"
         android:textAlignment="center"
         android:textColor="#ffffff"
-        android:layout_marginTop="465dp"/>
-
+        android:layout_marginTop="505dp"/>
 
 </RelativeLayout>
 
