@@ -3,5 +3,8 @@
     <string name="Login">Login</string>
     <string name="Username">Username</string>
     <string name="Dummy_facebook">Dummy_Facebook</string>
+    <string name="menu_home">Home</string>
+    <string name="action_setting">Home</string>
+
 
 </resources>
