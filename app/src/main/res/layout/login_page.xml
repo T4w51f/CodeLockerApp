@@ -121,7 +121,7 @@
         android:layout_marginStart="165dp"
         android:textAlignment="center"
         android:textColor="#ffffff"
-        android:onClick="register"
+        android:onClick="goToRegister"
         android:layout_marginTop="630dp"/>
 
     <TextView

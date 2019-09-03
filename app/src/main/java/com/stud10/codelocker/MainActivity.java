@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, reloginWaitTime);
             }
+
         }
     }
 
@@ -68,11 +70,39 @@ public class MainActivity extends AppCompatActivity {
         username.setError("This Username does not exist");
     }
 
-    public void register(View view) {
+    public void goToRegister(View view) {
         setContentView(R.layout.registration_page);
     }
 
     public void returnToLogin(View view) {
         setContentView(R.layout.login_page);
+    }
+
+    public void register(View view) {
+        EditText reg_username = (EditText) findViewById(R.id.username);
+        EditText reg_password = (EditText) findViewById(R.id.password);
+        EditText firstName = (EditText) findViewById(R.id.firstname);
+        EditText lastname = (EditText) findViewById(R.id.lastname);
+        EditText email = (EditText) findViewById(R.id.email);
+
+        //Flags to verify if existing users have the same username or email ID
+        boolean validUsernameFlag = DatabaseManager.validateUsername(reg_username.getText().toString());
+        boolean validEmailFlag = DatabaseManager.validateEmail(email.getText().toString());
+
+        if(validEmailFlag && validUsernameFlag){
+            boolean userAccountCreatedFlag = DatabaseManager.createUser(firstName.getText().toString(),
+                    lastname.getText().toString(),
+                    reg_username.getText().toString(),
+                    reg_password.getText().toString(),
+                    email.getText().toString());
+
+            if(!userAccountCreatedFlag){
+                //Failed to create account message
+            }
+        } else if(!validUsernameFlag){
+            //Error for username not available
+        } else if(!validEmailFlag){
+            //Error for email incorrect format
+        }
     }
 }

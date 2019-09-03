@@ -107,7 +107,8 @@
         android:text="REGISTER"
         android:textStyle="bold"
         android:textSize="20pt"
-        android:background="#ff8a1c" />
+        android:background="#ff8a1c"
+        android:onClick="register"/>
 
     <TextView
         android:id="@+id/login_page"

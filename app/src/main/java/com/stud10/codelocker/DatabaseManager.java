@@ -65,26 +65,21 @@ public class DatabaseManager {
         return false;
     }
 
-    private void createUser(String firstName, String lastName, String username, String password, String email){
+    public static boolean createUser(String firstName, String lastName, String username, String password, String email){
         Timestamp created_at = getTimestamp();
         Timestamp updated_at = getTimestamp();
         UUID userID = null;
 
-        //Flags to verify if existing users have the same username or email ID
-        boolean validUsernameFlag = validateUsername(username);
-        boolean validEmailFlag = validateEmail(email);
-
-        if(validUsernameFlag && validEmailFlag) {
-            byte[] bytes = new byte[0];
-            try {
-                bytes = username.getBytes("UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            UUID uuid = UUID.nameUUIDFromBytes(bytes);
-            userID = uuid;
-
+        //Generating UUID
+        byte[] bytes = new byte[0];
+        try {
+            bytes = username.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
         }
+        UUID uuid = UUID.nameUUIDFromBytes(bytes);
+        userID = uuid;
 
         String query = "INSERT INTO app_user(user_id, name, email, password, created_at, updated_at, username) VALUES(?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection(url, user, db_password);
@@ -102,14 +97,16 @@ public class DatabaseManager {
 
         } catch (SQLException ex) {
             ex.getStackTrace();
+            return false;
         }
+        return true;
     }
 
     /***
      * Retrieves the current timestamp
      * @return the current timestamp in local time
      */
-    private Timestamp getTimestamp(){
+    private static Timestamp getTimestamp(){
         Date date = new Date();
         long time = date.getTime();
         Timestamp ts = new Timestamp(time);
@@ -121,7 +118,7 @@ public class DatabaseManager {
      * @param username Username of new user adding an entry
      * @return true if the username is available for use
      */
-    private boolean validateUsername(String username){
+    public static boolean validateUsername(String username){
         double count = 0;
         String query = "SELECT COUNT(username) FROM app_user WHERE username = \'" + username + "\'";
         try (Connection con = DriverManager.getConnection(url, user, db_password);
@@ -146,7 +143,7 @@ public class DatabaseManager {
      * @param email unique user email ID
      * @return true if the email is available for user
      */
-    private boolean validateEmail(String email){
+    public static boolean validateEmail(String email){
         double count = 0;
 
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
