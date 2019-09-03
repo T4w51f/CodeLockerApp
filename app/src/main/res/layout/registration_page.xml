@@ -14,12 +14,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create a new account"
-        android:textSize="18pt"
-        android:layout_marginStart="25dp"
+        android:textSize="17pt"
+        android:layout_marginStart="21dp"
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:textStyle="bold"
-        android:layout_marginTop="80dp"/>
+        android:layout_marginTop="75dp"/>
 
     <EditText
         android:id="@+id/username"
@@ -28,7 +28,7 @@
         android:ems="10"
         android:textSize="14pt"
         android:layout_marginTop="290dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="24dp"
         android:inputType="textPersonName"
         android:background="#ffffff"
         android:drawableRight="@drawable/ic_username_icon"
@@ -44,7 +44,7 @@
         android:ems="10"
         android:textSize="14pt"
         android:layout_marginTop="350dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="24dp"
         android:background="#ffffff"
         android:inputType="textPassword"
         android:drawableRight="@drawable/ic_password_icon"
@@ -59,7 +59,7 @@
         android:ems="10"
         android:textSize="14pt"
         android:layout_marginTop="170dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="24dp"
         android:inputType="textPersonName"
         android:background="#ffffff"
         android:drawableRight="@drawable/ic_username_icon"
@@ -75,7 +75,7 @@
         android:ems="10"
         android:textSize="14pt"
         android:layout_marginTop="230dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="24dp"
         android:background="#ffffff"
         android:inputType="textPassword"
         android:drawableRight="@drawable/ic_username_icon"
@@ -90,7 +90,7 @@
         android:ems="10"
         android:textSize="14pt"
         android:layout_marginTop="410dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="24dp"
         android:background="#ffffff"
         android:inputType="textPassword"
         android:drawableRight="@drawable/ic_email_icon"
@@ -108,6 +108,18 @@
         android:textStyle="bold"
         android:textSize="20pt"
         android:background="#ff8a1c" />
+
+    <TextView
+        android:id="@+id/login_page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return to Login page"
+        android:textSize="8pt"
+        android:layout_marginStart="135dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:onClick="returnToLogin"
+        android:layout_marginTop="610dp"/>
 
 
 </RelativeLayout>

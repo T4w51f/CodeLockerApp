@@ -53,12 +53,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, reloginWaitTime);
             }
-
-//            if (loginAttempts == 0) {
-//                log.setEnabled(false);
-//                Toast.makeText(MainActivity.this, "You have made 5 attempts, please wait 3 minutes to log again", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
         }
     }
 
@@ -72,5 +66,13 @@ public class MainActivity extends AppCompatActivity {
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
         username.startAnimation(shake);
         username.setError("This Username does not exist");
+    }
+
+    public void register(View view) {
+        setContentView(R.layout.registration_page);
+    }
+
+    public void returnToLogin(View view) {
+        setContentView(R.layout.login_page);
     }
 }
