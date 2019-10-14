@@ -43,7 +43,7 @@ const getUserCount = (request, response) => {
     if (error) {
       throw error
     }
-    response.status(202).json(results.rows)
+    response.status(200).json(results.rows)
   })
 }
 app.route('/user_count').get(getUserCount)
@@ -52,45 +52,38 @@ app.route('/user_count').get(getUserCount)
 const getPassword = (request, response) => {
   const { username } = request.body
 
-  pool.query('SELECT password FROM app_user WHERE username = $1', (error, results) => {
+  pool.query('SELECT password FROM app_user WHERE username = $1', [username], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(203).json(results.rows)
+    response.status(200).json(results.rows)
   })
 }
 app.route('/password').get(getPassword)
 
 //Check if username exists
-const getUsernameOccurence = (request, response) => {
+const getUsernameOccurrence = (request, response) => {
   const { username } = request.body
   pool.query('SELECT COUNT(username) FROM app_user WHERE username = $1', [username], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(204).json(results.rows)
+    response.status(200).json(results.rows[0])
   })
 }
-app.route('/username_occurence').get(getUsernameOccurence)
+app.route('/username_occurrence').get(getUsernameOccurrence)
 
 //Check if email exists
-const getEmailOccurence = (request, response) => {
+const getEmailOccurrence = (request, response) => {
   const { email } = request.body
   pool.query('SELECT COUNT(email) FROM app_user WHERE email = $1', [email], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(205).json(results.rows)
+    response.status(200).json(results.rows[0])
   })
 }
-app.route('/email_occurence').get(getEmailOccurence)
-
-// app
-//   .route('/users')
-//   // GET endpoint
-//   .get(getUser)
-//   // POST endpoint
-//   .post(addUser)
+app.route('/email_occurrence').get(getEmailOccurrence)
 
 // Start server
 app.listen(process.env.PORT || 3002, () => {

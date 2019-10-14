@@ -12,6 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+
 public class MainActivity extends AppCompatActivity {
     EditText username, password;
     private int loginAttempts = 5;
@@ -25,37 +31,45 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login_page);
     }
 
-    public void login(View view) throws InterruptedException {
+    public void login(View view) throws InterruptedException, JSONException {
         this.username = (EditText) findViewById(R.id.username);
         this.password = (EditText) findViewById(R.id.password);
         final Button log = (Button) findViewById(R.id.login);
 
-        boolean userExists = DatabaseManager.findUsername(username.getText().toString());
-        boolean correctPass = DatabaseManager.getPassword(username.getText().toString(), password.getText().toString());
-
-        if(userExists && correctPass){
-            loginAttempts = 5;
-            setContentView(R.layout.activity_main);
-        } else if(!userExists){
-            incorrectUsernameError();
-        } else if(!correctPass) {
-            incorrectPasswordError();
-            username.setError(null);
-            loginAttempts--;
-
-            if(loginAttempts == 0) {
-                log.setEnabled(false);
-                Toast.makeText(MainActivity.this, "You have made 5 attempts, please wait 3 minutes to log again", Toast.LENGTH_LONG).show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loginAttempts = 5;
-                        log.setEnabled(true);
-                    }
-                }, reloginWaitTime);
-            }
-
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        try {
+            JsonObjectRequest json = DatabaseManagerRESTApi.findUsername(username.getText().toString());
+            requestQueue.add(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
+//        boolean userExists = DatabaseManager.findUsername(username.getText().toString());
+//        boolean correctPass = DatabaseManager.getPassword(username.getText().toString(), password.getText().toString());
+//
+//        if(userExists && correctPass){
+//            loginAttempts = 5;
+//            setContentView(R.layout.activity_main);
+//        } else if(!userExists){
+//            incorrectUsernameError();
+//        } else if(!correctPass) {
+//            incorrectPasswordError();
+//            username.setError(null);
+//            loginAttempts--;
+//
+//            if(loginAttempts == 0) {
+//                log.setEnabled(false);
+//                Toast.makeText(MainActivity.this, "You have made 5 attempts, please wait 3 minutes to log again", Toast.LENGTH_LONG).show();
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        loginAttempts = 5;
+//                        log.setEnabled(true);
+//                    }
+//                }, reloginWaitTime);
+//            }
+//
+//        }
     }
 
     private void incorrectPasswordError(){

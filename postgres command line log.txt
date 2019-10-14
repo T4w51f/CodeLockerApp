@@ -1,0 +1,62 @@
+DELL@DESKTOP-KQ7FGRJ MINGW64 /e/NodeJS and DB server for CodeLock
+$ psql -U postgres
+psql (11.5)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \password postgres
+Enter new password:
+Enter it again:
+Passwords didn't match.
+postgres=# \password postgres
+Enter new password:
+Enter it again:
+postgres=# CREATE ROLE api_user WITH LOGIN PASSWORD 'password';
+CREATE ROLE
+postgres=# ALTER ROLE api_user CREATEDB
+postgres-# ALTER ROLE api_user CREATEDB;
+ERROR:  syntax error at or near "ALTER"
+LINE 2: ALTER ROLE api_user CREATEDB;
+        ^
+postgres=# ALTER ROLE api_user CREATEDB;
+ALTER ROLE
+postgres=# \q
+
+DELL@DESKTOP-KQ7FGRJ MINGW64 /e/NodeJS and DB server for CodeLock
+$ psql -d postgres -U api_user
+psql (11.5)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=> CREATE DATABASE codelock_api;
+CREATE DATABASE
+postgres=> \c codelock_api
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+You are now connected to database "codelock_api" as user "api_user".
+codelock_api=> CREATE TABLE public.app_user
+codelock_api-> (
+codelock_api(>     id integer NOT NULL,
+codelock_api(>     name character varying(255) COLLATE pg_catalog."default",
+codelock_api(>     email character varying(255) COLLATE pg_catalog."default",
+codelock_api(>     password character varying(255) COLLATE pg_catalog."default",
+
+codelock_api(>     created_at timestamp with time zone,
+codelock_api(>     updated_at timestamp with time zone,
+codelock_api(>     username character varying(255) COLLATE pg_catalog."default",
+
+codelock_api(>     user_id uuid,
+codelock_api(>     CONSTRAINT app_user_pkey PRIMARY KEY (id)
+codelock_api(> )
+codelock_api-> ;
+CREATE TABLE
+codelock_api=> INSERT INTO app_user (id, user_id, name, email, password)
+codelock_api-> VALUES ('1', '1f44f1ae-ecab-11e9-81b4-2a2ae2dbcce4', 'Tawsif Hasa
+n', 'th@gmail.com', 'testpassword');
+INSERT 0 1
+codelock_api=>

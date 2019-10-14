@@ -1,0 +1,178 @@
+{
+	"info": {
+		"_postman_id": "bf1bde62-79d7-454b-88c5-2068dd6679d5",
+		"name": "CodeLock API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get user data with UUID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"user_id\" : \"484f32f7-bbae-4e3f-9831-b91bd7458579\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/get_users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"get_users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\" : \"4\",\n\t\"name\" : \"Tawsiffff\",\n\t\"email\" : \"ffff\",\n\t\"password\" : \"ffff\",\n\t\"created_at\" : null,\n\t\"updated_at\" : null,\n\t\"username\" : \"ffff\",\n\t\"user_id\" : \"b2fb1f7b-5050-412a-9b4c-b8e49e0ffa33\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/create_users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"create_users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get number of users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/user_count",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user_count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get password",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\" : \"ffff\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/password",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Username Occurence",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\" : \"ffff\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/username_occurence",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"username_occurence"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Email Occurence",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\" : \"th@gmail.com\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/email_occurence",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"email_occurence"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
