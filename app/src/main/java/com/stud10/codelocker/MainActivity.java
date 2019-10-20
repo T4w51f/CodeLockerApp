@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -16,12 +18,27 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Console;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = HttpHandler.class.getSimpleName();;
     EditText username, password;
     private int loginAttempts = 5;
     private int reloginWaitTime = 180000; //ms
+
+    //endpoints
+    private static String baseUrl = "http://192.168.0.19:3002";
+    private static String getUser = "/get_users";
+    private static String createUser = "/create_users";
+    private static String userCount = "/user_count";
+    private static String getPassword = "/password";
+    private static String usernameOccurrence = "/username_occurrence";
+    private static String emailOccurrence = "/email_occurrence";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,40 +53,37 @@ public class MainActivity extends AppCompatActivity {
         this.password = (EditText) findViewById(R.id.password);
         final Button log = (Button) findViewById(R.id.login);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        try {
-            JsonObjectRequest json = DatabaseManagerRESTApi.findUsername(username.getText().toString());
-            requestQueue.add(json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        //temporary fix
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
-//        boolean userExists = DatabaseManager.findUsername(username.getText().toString());
-//        boolean correctPass = DatabaseManager.getPassword(username.getText().toString(), password.getText().toString());
-//
-//        if(userExists && correctPass){
-//            loginAttempts = 5;
-//            setContentView(R.layout.activity_main);
-//        } else if(!userExists){
-//            incorrectUsernameError();
-//        } else if(!correctPass) {
-//            incorrectPasswordError();
-//            username.setError(null);
-//            loginAttempts--;
-//
-//            if(loginAttempts == 0) {
-//                log.setEnabled(false);
-//                Toast.makeText(MainActivity.this, "You have made 5 attempts, please wait 3 minutes to log again", Toast.LENGTH_LONG).show();
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        loginAttempts = 5;
-//                        log.setEnabled(true);
-//                    }
-//                }, reloginWaitTime);
-//            }
-//
-//        }
+        //int usernameOccurrence = getUsernameCount(username.getText().toString());
+
+        boolean userExists = userExists(username.getText().toString());
+        boolean correctPass = checkPassword(username.getText().toString(), password.getText().toString());
+
+        if(userExists && correctPass){
+            loginAttempts = 5;
+            setContentView(R.layout.activity_main);
+        } else if(!userExists){
+            incorrectUsernameError();
+        } else if(!correctPass) {
+            incorrectPasswordError();
+            username.setError(null);
+            loginAttempts--;
+
+            if(loginAttempts == 0) {
+                log.setEnabled(false);
+                Toast.makeText(MainActivity.this, "You have made 5 attempts, please wait 3 minutes to log again", Toast.LENGTH_LONG).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loginAttempts = 5;
+                        log.setEnabled(true);
+                    }
+                }, reloginWaitTime);
+            }
+        }
     }
 
     private void incorrectPasswordError(){
@@ -118,5 +132,106 @@ public class MainActivity extends AppCompatActivity {
         } else if(!validEmailFlag){
             //Error for email incorrect format
         }
+    }
+
+    public int getUsernameCount(String endpointUsername){
+        String count = null;
+        // Making a request to url and getting response
+        String url = baseUrl + usernameOccurrence + "/" + endpointUsername;
+        String jsonStr = httpResponseString(url, "GET");
+
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                count = jsonObj.getString("count");
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        return Integer.valueOf(count);
+    }
+
+    public int getPassword(String username, String password){
+        String count = null;
+        // Making a request to url and getting response
+        String url = baseUrl + getPassword + "/" + username + "/" + password;
+        String jsonStr = httpResponseString(url, "GET");
+
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                count = jsonObj.getString("count");
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        return Integer.valueOf(count);
+    }
+
+    public boolean userExists(String username){
+        int count = getUsernameCount(username);
+        return (count > 0);
+    }
+
+    public boolean checkPassword(String username, String password){
+        int count = getPassword(username, password);
+        return (count > 0);
+    }
+
+    public String httpResponseString(String url, String httpMethodType){
+        HttpHandler sh = new HttpHandler();
+        //String jsonInputString = "{\"username\": \"" + un + "\"}";
+        String jsonStr = null;
+        if(httpMethodType.equals("GET")) jsonStr = sh.makeGetServiceCall(url);
+        else if(httpMethodType.equals("POST")) jsonStr = sh.makeGetServiceCall(url);
+        else jsonStr = "INCORRECT HTTP METHOD TYPE";
+
+        return jsonStr;
     }
 }

@@ -32,6 +32,8 @@ public class DatabaseManagerRESTApi {
     private static String usernameOccurrence = "/username_occurrence";
     private static String emailOccurrence = "/email_occurrence";
 
+    private static String usernameCount = "";
+
     public static JsonObjectRequest createUser(String firstName, String lastName, String username, String password, String email) throws JSONException {
         Timestamp created_at = getTimestamp();
         Timestamp updated_at = getTimestamp();
@@ -67,14 +69,14 @@ public class DatabaseManagerRESTApi {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("RESPONSE: ", response.toString());
+                        Log.e("RESPONSE", response.toString());
                     }
                 },
                 new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("ERROR: ", error.toString());
+                        Log.e("ERROR", error.toString());
                     }
                 }
         );
@@ -95,14 +97,14 @@ public class DatabaseManagerRESTApi {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("RESPONSE: ", response.toString());
+                        Log.e("RESPONSE", response.toString());
                     }
                 },
                 new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("ERROR: ", error.toString());
+                        Log.e("ERROR", error.toString());
                     }
                 }
         );
@@ -115,27 +117,40 @@ public class DatabaseManagerRESTApi {
         gson.addProperty("username", username);
 
         JSONObject JsonRequest = new JSONObject(gson.toString());
+        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    usernameCount = response.get("count").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("ERROR", error.toString());
+            }
+        };
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 baseUrl + usernameOccurrence,
                 JsonRequest,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("RESPONSE: ", response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("ERROR: ", error.toString());
-                    }
-                }
+                listener,
+                errorListener
         );
+
         return objectRequest;
     }
+
+    public static String getUsernameCount (){
+        return usernameCount;
+    }
+
 
     /***
      * Retrieves the current timestamp
@@ -167,14 +182,14 @@ public class DatabaseManagerRESTApi {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.e("RESPONSE: ", response.toString());
+                        Log.e("RESPONSE", response.toString());
                     }
                 },
                 new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("ERROR: ", error.toString());
+                        Log.e("ERROR", error.toString());
                     }
                 }
         );

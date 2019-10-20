@@ -52,26 +52,26 @@ app.route('/user_count').get(getUserCount)
 const getPassword = (request, response) => {
   const { username } = request.body
 
-  pool.query('SELECT password FROM app_user WHERE username = $1', [username], (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).json(results.rows)
-  })
-}
-app.route('/password').get(getPassword)
-
-//Check if username exists
-const getUsernameOccurrence = (request, response) => {
-  const { username } = request.body
-  pool.query('SELECT COUNT(username) FROM app_user WHERE username = $1', [username], (error, results) => {
+  pool.query('SELECT COUNT(*) FROM app_user WHERE username = $1 AND password = $2', [request.params.un, request.params.pw], (error, results) => {
     if (error) {
       throw error
     }
     response.status(200).json(results.rows[0])
   })
 }
-app.route('/username_occurrence').get(getUsernameOccurrence)
+app.get('/password/:un/:pw',getPassword)
+
+//Check if username exists
+//UPTODATE AND WORKING EXAMPLE FOR PARAMS
+const getUsernameOccurrence = (request, response) => {
+  pool.query('SELECT COUNT(username) FROM app_user WHERE username = $1', [request.params.un], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows[0])
+  })
+}
+app.get('/username_occurrence/:un', getUsernameOccurrence)
 
 //Check if email exists
 const getEmailOccurrence = (request, response) => {
