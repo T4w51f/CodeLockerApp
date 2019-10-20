@@ -22,15 +22,16 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"user_id\" : \"484f32f7-bbae-4e3f-9831-b91bd7458579\"\n}"
+					"raw": ""
 				},
 				"url": {
-					"raw": "{{baseUrl}}/get_users",
+					"raw": "{{baseUrl}}/get_users/484f32f7-bbae-4e3f-9831-b91bd7458579",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"get_users"
+						"get_users",
+						"484f32f7-bbae-4e3f-9831-b91bd7458579"
 					]
 				}
 			},
@@ -98,15 +99,17 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\" : \"ffff\"\n}"
+					"raw": ""
 				},
 				"url": {
-					"raw": "{{baseUrl}}/password",
+					"raw": "{{baseUrl}}/password/abcd/testpassword",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"password"
+						"password",
+						"abcd",
+						"testpassword"
 					]
 				}
 			},
@@ -129,15 +132,23 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\" : \"ffff\"\n}"
+					"raw": ""
 				},
 				"url": {
-					"raw": "{{baseUrl}}/username_occurence",
+					"raw": "{{baseUrl}}/username_occurrence/abcd?",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"username_occurence"
+						"username_occurrence",
+						"abcd"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "\"abcd\"",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -163,12 +174,13 @@
 					"raw": "{\n\t\"email\" : \"th@gmail.com\"\n}"
 				},
 				"url": {
-					"raw": "{{baseUrl}}/email_occurence",
+					"raw": "{{baseUrl}}/email_occurrence/zzz",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"email_occurence"
+						"email_occurrence",
+						"zzz"
 					]
 				}
 			},

@@ -12,9 +12,7 @@ app.use(cors())
 
 //Get user information with user_id
 const getUser = (request, response) => {
-  const { user_id } = request.body
-
-  pool.query('SELECT * FROM app_user WHERE user_id = $1', [user_id], (error, results) => {
+  pool.query('SELECT * FROM app_user WHERE user_id = $1', [request.params.user_id], (error, results) => {
     if (error) {
       throw error
     }
@@ -22,7 +20,7 @@ const getUser = (request, response) => {
   })
 }
 
-app.route('/get_users').get(getUser)
+app.get('/get_users/:user_id',getUser)
 
 //Create user data
 const addUser= (request, response) => {
@@ -75,15 +73,14 @@ app.get('/username_occurrence/:un', getUsernameOccurrence)
 
 //Check if email exists
 const getEmailOccurrence = (request, response) => {
-  const { email } = request.body
-  pool.query('SELECT COUNT(email) FROM app_user WHERE email = $1', [email], (error, results) => {
+  pool.query('SELECT COUNT(email) FROM app_user WHERE email = $1', [request.params.email], (error, results) => {
     if (error) {
       throw error
     }
     response.status(200).json(results.rows[0])
   })
 }
-app.route('/email_occurrence').get(getEmailOccurrence)
+app.get('/email_occurrence/:email', getEmailOccurrence)
 
 // Start server
 app.listen(process.env.PORT || 3002, () => {
