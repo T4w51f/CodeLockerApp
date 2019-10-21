@@ -17,13 +17,20 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Console;
+import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = HttpHandler.class.getSimpleName();;
@@ -54,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
         final Button log = (Button) findViewById(R.id.login);
 
         //temporary fix
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        overrideNetworkThreadPolicy();
 
         //int usernameOccurrence = getUsernameCount(username.getText().toString());
 
@@ -109,16 +115,19 @@ public class MainActivity extends AppCompatActivity {
     public void register(View view) {
         EditText reg_username = (EditText) findViewById(R.id.username);
         EditText reg_password = (EditText) findViewById(R.id.password);
-        EditText firstName = (EditText) findViewById(R.id.firstname);
+        EditText firstname = (EditText) findViewById(R.id.firstname);
         EditText lastname = (EditText) findViewById(R.id.lastname);
         EditText email = (EditText) findViewById(R.id.email);
 
-        //Flags to verify if existing users have the same username or email ID
-        boolean validUsernameFlag = DatabaseManager.validateUsername(reg_username.getText().toString());
-        boolean validEmailFlag = DatabaseManager.validateEmail(email.getText().toString());
+        //Temporary fix
+        overrideNetworkThreadPolicy();
 
-        if(validEmailFlag && validUsernameFlag){
-            boolean userAccountCreatedFlag = DatabaseManager.createUser(firstName.getText().toString(),
+        //Flags to verify if existing users have the same username or email ID
+        boolean usernameAvailable = !userExists(reg_username.getText().toString());
+        boolean emailAvailable = !emailExists(email.getText().toString());
+
+        if(emailAvailable && usernameAvailable){
+            boolean userAccountCreatedFlag = createUser(firstname.getText().toString(),
                     lastname.getText().toString(),
                     reg_username.getText().toString(),
                     reg_password.getText().toString(),
@@ -127,9 +136,9 @@ public class MainActivity extends AppCompatActivity {
             if(!userAccountCreatedFlag){
                 //Failed to create account message
             }
-        } else if(!validUsernameFlag){
+        } else if(!usernameAvailable){
             //Error for username not available
-        } else if(!validEmailFlag){
+        } else if(!emailAvailable){
             //Error for email incorrect format
         }
     }
@@ -138,7 +147,47 @@ public class MainActivity extends AppCompatActivity {
         String count = null;
         // Making a request to url and getting response
         String url = baseUrl + usernameOccurrence + "/" + endpointUsername;
-        String jsonStr = httpResponseString(url, "GET");
+        String jsonStr = httpResponseString(url, "GET", null);
+
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                count = jsonObj.getString("count");
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        return Integer.valueOf(count);
+    }
+
+    public int getEmailCount(String endpointEmail){
+        String count = null;
+        // Making a request to url and getting response
+        String url = baseUrl + emailOccurrence + "/" + endpointEmail;
+        String jsonStr = httpResponseString(url, "GET", null);
 
         Log.e(TAG, "Response from url: " + jsonStr);
         if (jsonStr != null) {
@@ -178,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         String count = null;
         // Making a request to url and getting response
         String url = baseUrl + getPassword + "/" + username + "/" + password;
-        String jsonStr = httpResponseString(url, "GET");
+        String jsonStr = httpResponseString(url, "GET", null);
 
         Log.e(TAG, "Response from url: " + jsonStr);
         if (jsonStr != null) {
@@ -219,19 +268,151 @@ public class MainActivity extends AppCompatActivity {
         return (count > 0);
     }
 
+    public boolean emailExists(String email){
+        int count = getEmailCount(email);
+        return (count > 0);
+    }
+
     public boolean checkPassword(String username, String password){
         int count = getPassword(username, password);
         return (count > 0);
     }
 
-    public String httpResponseString(String url, String httpMethodType){
+    public int getNextUserIdKey(){
+        String count = null;
+        // Making a request to url and getting response
+        String url = baseUrl + userCount;
+        String jsonStr = httpResponseString(url, "GET", null);
+
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                count = jsonObj.getString("count");
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        return Integer.valueOf(count) + 1;
+    }
+
+    public boolean createUser(String firstname, String lastname, String reg_username, String reg_password, String email){
+        Timestamp created_at = getTimestamp();
+        Timestamp updated_at = getTimestamp();
+        UUID userID = null;
+
+        //count user, add one, make that id
+
+        //Generating UUID
+        byte[] bytes = new byte[0];
+        try {
+            bytes = reg_username.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
+        }
+        UUID uuid = UUID.nameUUIDFromBytes(bytes);
+        userID = uuid;
+
+        //endpoint
+        // Making a request to url and getting response
+        String url = baseUrl + createUser;
+
+        String id = String.valueOf(getNextUserIdKey());
+        //requestBody
+        JsonObject gson = new JsonObject();
+        gson.addProperty("id", id);
+        gson.addProperty("name", firstname + " " + lastname);
+        gson.addProperty("email", email);
+        gson.addProperty("password", reg_password);
+        gson.addProperty("created_at", String.valueOf(created_at));
+        gson.addProperty("updated_at", String.valueOf(updated_at));
+        gson.addProperty("username", reg_username);
+        gson.addProperty("user_id", String.valueOf(userID));
+
+        String requestBody = gson.toString();
+        String jsonStr = httpResponseString(url, "POST", requestBody);
+        String response = null;
+
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                response = jsonObj.toString();
+                Log.e(TAG, response);
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        return true;
+    }
+
+    public String httpResponseString(String url, String httpMethodType, String requestBody){
         HttpHandler sh = new HttpHandler();
-        //String jsonInputString = "{\"username\": \"" + un + "\"}";
         String jsonStr = null;
         if(httpMethodType.equals("GET")) jsonStr = sh.makeGetServiceCall(url);
-        else if(httpMethodType.equals("POST")) jsonStr = sh.makeGetServiceCall(url);
+        else if(httpMethodType.equals("POST")) jsonStr = sh.makePostServiceCall(url, requestBody);
         else jsonStr = "INCORRECT HTTP METHOD TYPE";
 
         return jsonStr;
+    }
+
+    /***
+     * Retrieves the current timestamp
+     * @return the current timestamp in local time
+     */
+    private static java.sql.Timestamp getTimestamp(){
+        Date date = new Date();
+        long time = date.getTime();
+        java.sql.Timestamp ts = new java.sql.Timestamp(time);
+        return ts;
+    }
+
+    private void overrideNetworkThreadPolicy() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 }

@@ -54,6 +54,7 @@ public class HttpHandler {
             try(OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
                 os.write(input, 0, input.length);
+                os.flush();
             }
 
             try(BufferedReader br = new BufferedReader(
@@ -62,7 +63,7 @@ public class HttpHandler {
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
-                System.out.println(response.toString());
+                Log.e(TAG, response.toString());
             }
 
         } catch (MalformedURLException e) {

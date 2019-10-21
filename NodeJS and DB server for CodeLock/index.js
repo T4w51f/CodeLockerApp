@@ -41,7 +41,7 @@ const getUserCount = (request, response) => {
     if (error) {
       throw error
     }
-    response.status(200).json(results.rows)
+    response.status(200).json(results.rows[0])
   })
 }
 app.route('/user_count').get(getUserCount)
