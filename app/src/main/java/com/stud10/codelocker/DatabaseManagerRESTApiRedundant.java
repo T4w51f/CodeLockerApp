@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.UUID;
 
 
-public class DatabaseManagerRESTApi {
+public class DatabaseManagerRESTApiRedundant {
     private static String baseUrl = "http://192.168.0.19:3002";
     private static String getUser = "/get_users";
     private static String createUser = "/create_users";

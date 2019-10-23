@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
-public class CodeLock {
+public class CodeLockRedundant {
     private static String email;
     private static String username;
     private static String firstName;
@@ -30,14 +30,14 @@ public class CodeLock {
     private static Map<String, Platform> appMap = new HashMap<>();
 
     /***
-     * Constructor to create an instance of the CodeLock app user
+     * Constructor to create an instance of the CodeLockRedundant app user
      * @param firstName non-empty first name string
      * @param lastName non-empty last name string
      * @param username unique user name for app
      * @param email user's email ID
      * @param password user's password to access the app
      */
-    public CodeLock(String firstName, String lastName, String username, String email, String password){
+    public CodeLockRedundant(String firstName, String lastName, String username, String email, String password){
         this.firstName = firstName;
         this.lastName = lastName;
         this. username = username;

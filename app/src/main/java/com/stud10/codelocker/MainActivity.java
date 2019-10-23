@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,24 +12,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.Console;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = HttpHandler.class.getSimpleName();;
@@ -62,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         //temporary fix
         overrideNetworkThreadPolicy();
-
-        //int usernameOccurrence = getUsernameCount(username.getText().toString());
 
         boolean userExists = userExists(username.getText().toString());
         boolean correctPass = checkPassword(username.getText().toString(), password.getText().toString());
@@ -399,4 +387,49 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
+
+    private HashMap<String, String> jsonResponseMap (HashMap<String, String> jsonKeysMap, String jsonStr){
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                for(String keys : jsonKeysMap.keySet()){
+                    jsonKeysMap.put(keys, jsonObj.getString(keys));
+                }
+
+            } catch (final JSONException e) {
+                Log.e(TAG, "Json parsing error: " + e.getMessage());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Json parsing error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        return jsonKeysMap;
+    }
+
+    //TODO clean up code
+    //TODO verify email address
+    //TODO confirmation email
+    //TODO error handling
+    //TODO rerun server upon failure
+    //TODO change password for existing user
+    //TODO create more classes to split the functions
 }

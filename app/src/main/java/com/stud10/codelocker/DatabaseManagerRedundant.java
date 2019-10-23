@@ -17,7 +17,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 
-public class DatabaseManager {
+public class DatabaseManagerRedundant {
 
     private static String url = "jdbc:postgresql://ec2-23-21-91-183.compute-1.amazonaws.com:5432/d6kp2l82786968";
     private static String user = "tnyjufhgxqoxgb";
