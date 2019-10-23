@@ -358,23 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e(TAG, "Response from url: " + jsonStr);
         if (jsonStr != null) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-                response = jsonObj.toString();
-                Log.e(TAG, response);
-
-            } catch (final JSONException e) {
-                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
+            Log.e(TAG, jsonStr);
 
         } else {
             Log.e(TAG, "Couldn't get json from server.");

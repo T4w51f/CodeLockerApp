@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLConnection;
 
 public class HttpHandler {
 
@@ -41,30 +42,28 @@ public class HttpHandler {
         return response;
     }
 
-    public String makePostServiceCall(String reqUrl, String jsonInputString) {
-        StringBuilder response = new StringBuilder();
+    public String makePostServiceCall(String reqUrl, String jsonInputString){
         try {
-            URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json; utf-8");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setDoOutput(true);
+            String charset = "UTF-8";
+            URLConnection connection = new URL(reqUrl).openConnection();;
 
-            try(OutputStream os = conn.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
-                os.flush();
+            connection.setDoOutput(true); // Triggers POST.
+            connection.setRequestProperty("Accept-Charset", charset);
+            connection.setRequestProperty("Content-Type", "application/json;charset=" + charset);
+
+            try (OutputStream output = connection.getOutputStream()) {
+                output.write(jsonInputString.getBytes(charset));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            try(BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), "utf-8"))) {
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-                Log.e(TAG, response.toString());
+            InputStream response = null;
+            try {
+                response = connection.getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            return response.toString();
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "MalformedURLException: " + e.getMessage());
@@ -75,7 +74,48 @@ public class HttpHandler {
         } catch (Exception e) {
             Log.e(TAG, "Exception: " + e.getMessage());
         }
-        return response.toString();
+        return null;
+
+
+//        try {
+//            URL url = new URL(reqUrl);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            conn.setRequestMethod("POST");
+//
+//            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+//            conn.setRequestProperty("Accept", "application/json");
+//
+//            conn.setDoOutput(true);
+//            //conn.connect();
+//
+//            try(OutputStream os = conn.getOutputStream()) {
+//                byte[] input = jsonInputString.getBytes("utf-8");
+//                os.write(input, 0, input.length);
+//                //os.flush();
+//                //os.close();
+//            }
+//
+//            //THE ISSUE IS HERE SOMEWHERE
+//            try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
+//                StringBuilder response = new StringBuilder();
+//                String responseLine = null;
+//                while ((responseLine = br.readLine()) != null) {
+//                    response.append(responseLine.trim());
+//                }
+//                Log.e(TAG, response.toString());
+//                return response.toString();
+//            }
+//
+//        } catch (MalformedURLException e) {
+//            Log.e(TAG, "MalformedURLException: " + e.getMessage());
+//        } catch (ProtocolException e) {
+//            Log.e(TAG, "ProtocolException: " + e.getMessage());
+//        } catch (IOException e) {
+//            Log.e(TAG, "IOException: " + e.getMessage());
+//        } catch (Exception e) {
+//            Log.e(TAG, "Exception: " + e.getMessage());
+//        }
+//        return null;
     }
 
     private String convertStreamToString(InputStream is) {
