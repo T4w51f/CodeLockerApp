@@ -122,6 +122,16 @@
         android:onClick="returnToLogin"
         android:layout_marginTop="610dp"/>
 
+    <TextView
+        android:id="@+id/registration_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="476dp"
+        android:onClick="returnToLogin"
+        android:textAlignment="center"
+        android:textSize="8pt" />
+
 
 </RelativeLayout>
 

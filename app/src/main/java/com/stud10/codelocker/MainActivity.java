@@ -11,10 +11,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,7 +26,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = HttpHandler.class.getSimpleName();;
-    EditText username, password;
+    EditText username, password, email;
     private int loginAttempts = 5;
     private int reloginWaitTime = 180000; //ms
 
@@ -92,6 +94,12 @@ public class MainActivity extends AppCompatActivity {
         username.setError("This Username does not exist");
     }
 
+    private void incorrectEmailError(){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        email.startAnimation(shake);
+        email.setError("The email entered is invalid");
+    }
+
     public void goToRegister(View view) {
         setContentView(R.layout.registration_page);
     }
@@ -105,13 +113,22 @@ public class MainActivity extends AppCompatActivity {
         EditText reg_password = (EditText) findViewById(R.id.password);
         EditText firstname = (EditText) findViewById(R.id.firstname);
         EditText lastname = (EditText) findViewById(R.id.lastname);
-        EditText email = (EditText) findViewById(R.id.email);
+        this.email = (EditText) findViewById(R.id.email);
+
+        //check username availability
+        boolean usernameAvailable = !userExists(reg_username.getText().toString());
+
+        //Email format check
+        boolean correctEmailFormat = emailFormatCheck(email.getText().toString());
+        if(!correctEmailFormat) {
+            incorrectEmailError();
+            return;
+        }
 
         //Temporary fix
         overrideNetworkThreadPolicy();
 
         //Flags to verify if existing users have the same username or email ID
-        boolean usernameAvailable = !userExists(reg_username.getText().toString());
         boolean emailAvailable = !emailExists(email.getText().toString());
 
         if(emailAvailable && usernameAvailable){
@@ -121,134 +138,60 @@ public class MainActivity extends AppCompatActivity {
                     reg_password.getText().toString(),
                     email.getText().toString());
 
-            if(!userAccountCreatedFlag){
-                //Failed to create account message
+
+            if(userAccountCreatedFlag){
+                Toast.makeText(MainActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Registration failed", Toast.LENGTH_LONG).show();
             }
+
         } else if(!usernameAvailable){
-            //Error for username not available
+            Toast.makeText(MainActivity.this, "Username not available", Toast.LENGTH_LONG).show();
         } else if(!emailAvailable){
-            //Error for email incorrect format
+            Toast.makeText(MainActivity.this, "Email not available", Toast.LENGTH_LONG).show();
         }
     }
 
+    private boolean emailFormatCheck(String email) {
+        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        if(!email.matches(regex)){
+            Log.e(TAG, "Email incorrectly formatted!");
+            return false;
+        }
+        return true;
+    }
+
     public int getUsernameCount(String endpointUsername){
-        String count = null;
         // Making a request to url and getting response
         String url = baseUrl + usernameOccurrence + "/" + endpointUsername;
         String jsonStr = httpResponseString(url, "GET", null);
 
-        Log.e(TAG, "Response from url: " + jsonStr);
-        if (jsonStr != null) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-                count = jsonObj.getString("count");
+        HashMap<String, String> jsonResponseKeys = new HashMap<>();
+        jsonResponseKeys.put("count", null);
 
-            } catch (final JSONException e) {
-                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
-
-        } else {
-            Log.e(TAG, "Couldn't get json from server.");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "Couldn't get json from server. Check LogCat for possible errors!",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
-        return Integer.valueOf(count);
+        return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count"));
     }
 
     public int getEmailCount(String endpointEmail){
-        String count = null;
         // Making a request to url and getting response
         String url = baseUrl + emailOccurrence + "/" + endpointEmail;
         String jsonStr = httpResponseString(url, "GET", null);
 
-        Log.e(TAG, "Response from url: " + jsonStr);
-        if (jsonStr != null) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-                count = jsonObj.getString("count");
+        HashMap<String, String> jsonResponseKeys = new HashMap<>();
+        jsonResponseKeys.put("count", null);
 
-            } catch (final JSONException e) {
-                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
-
-        } else {
-            Log.e(TAG, "Couldn't get json from server.");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "Couldn't get json from server. Check LogCat for possible errors!",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
-        return Integer.valueOf(count);
+        return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count"));
     }
 
     public int getPassword(String username, String password){
-        String count = null;
         // Making a request to url and getting response
         String url = baseUrl + getPassword + "/" + username + "/" + password;
         String jsonStr = httpResponseString(url, "GET", null);
 
-        Log.e(TAG, "Response from url: " + jsonStr);
-        if (jsonStr != null) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-                count = jsonObj.getString("count");
+        HashMap<String, String> jsonResponseKeys = new HashMap<>();
+        jsonResponseKeys.put("count", null);
 
-            } catch (final JSONException e) {
-                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
-
-        } else {
-            Log.e(TAG, "Couldn't get json from server.");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "Couldn't get json from server. Check LogCat for possible errors!",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
-        return Integer.valueOf(count);
+        return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count"));
     }
 
     public boolean userExists(String username){
@@ -267,43 +210,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int getNextUserIdKey(){
-        String count = null;
         // Making a request to url and getting response
         String url = baseUrl + userCount;
         String jsonStr = httpResponseString(url, "GET", null);
 
-        Log.e(TAG, "Response from url: " + jsonStr);
-        if (jsonStr != null) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-                count = jsonObj.getString("count");
+        HashMap<String, String> jsonResponseKeys = new HashMap<>();
+        jsonResponseKeys.put("count", null);
 
-            } catch (final JSONException e) {
-                Log.e(TAG, "Json parsing error: " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Json parsing error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            }
-
-        } else {
-            Log.e(TAG, "Couldn't get json from server.");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "Couldn't get json from server. Check LogCat for possible errors!",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
-        return Integer.valueOf(count) + 1;
+        return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count")) + 1;
     }
 
     public boolean createUser(String firstname, String lastname, String reg_username, String reg_password, String email){
@@ -347,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e(TAG, "Response from url: " + jsonStr);
         if (jsonStr != null) {
             Log.e(TAG, jsonStr);
+            return true;
 
         } else {
             Log.e(TAG, "Couldn't get json from server.");
@@ -358,8 +273,8 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
             });
+            return false;
         }
-        return true;
     }
 
     public String httpResponseString(String url, String httpMethodType, String requestBody){
@@ -432,4 +347,8 @@ public class MainActivity extends AppCompatActivity {
     //TODO rerun server upon failure
     //TODO change password for existing user
     //TODO create more classes to split the functions
+    //TODO success message upon account registration
+    //TODO null handling, e.g. login crashes
+    //TODO strings should be in one file
+    //TODO server disconnection causes freeze
 }
