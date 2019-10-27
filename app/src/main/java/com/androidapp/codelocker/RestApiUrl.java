@@ -1,4 +1,4 @@
-package com.stud10.codelocker;
+package com.androidapp.codelocker;
 
 enum RestApiUrl {
 
@@ -11,18 +11,31 @@ enum RestApiUrl {
 
     private String endpoint;
 
+    /***
+     * Constructor for this enum class
+     * @param endpoint
+     */
     RestApiUrl(String endpoint) {
         this.endpoint = endpoint;
     }
 
+    /***
+     * @return the endpoint with no arguments
+     */
     public String endpoint(){
         return endpoint;
     }
 
+    /***
+     * @return the endpoint with one arguments
+     */
     public String endpoint(String path1){
         return endpoint + "/" + path1;
     }
 
+    /***
+     * @return the endpoint with two arguments
+     */
     public String endpoint(String path1, String path2){
         return endpoint + "/" + path1 + "/" + path2;
     }

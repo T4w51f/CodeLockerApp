@@ -1,4 +1,4 @@
-package com.stud10.codelocker;
+package com.androidapp.codelocker;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;

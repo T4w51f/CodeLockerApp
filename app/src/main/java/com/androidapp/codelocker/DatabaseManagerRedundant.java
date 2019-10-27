@@ -1,4 +1,4 @@
-package com.stud10.codelocker;
+package com.androidapp.codelocker;
 
 import android.os.StrictMode;
 
@@ -8,12 +8,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.UUID;
 
 

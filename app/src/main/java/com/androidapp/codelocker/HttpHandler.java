@@ -1,4 +1,4 @@
-package com.stud10.codelocker;
+package com.androidapp.codelocker;
 
 import android.util.Log;
 
@@ -18,9 +18,17 @@ public class HttpHandler {
 
     private static final String TAG = HttpHandler.class.getSimpleName();
 
+    /***
+     * Constructor for this class
+     */
     public HttpHandler() {
     }
 
+    /***
+     * Runs a GET request-response REST call
+     * @param reqUrl Endpoint url to call
+     * @return Response string from the call
+     */
     public String makeGetServiceCall(String reqUrl) {
         String response = null;
         try {
@@ -42,10 +50,16 @@ public class HttpHandler {
         return response;
     }
 
+    /***
+     * Runs a POST request-response REST call
+     * @param reqUrl Endpoint url to call
+     * @return Response string from the call
+     */
     public String makePostServiceCall(String reqUrl, String jsonInputString){
         try {
             String charset = "UTF-8";
-            URLConnection connection = new URL(reqUrl).openConnection();;
+            URL url = new URL(reqUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setDoOutput(true); // Triggers POST.
             connection.setRequestProperty("Accept-Charset", charset);
@@ -75,49 +89,13 @@ public class HttpHandler {
             Log.e(TAG, "Exception: " + e.getMessage());
         }
         return null;
-
-
-//        try {
-//            URL url = new URL(reqUrl);
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//            conn.setRequestMethod("POST");
-//
-//            conn.setRequestProperty("Content-Type", "application/json; utf-8");
-//            conn.setRequestProperty("Accept", "application/json");
-//
-//            conn.setDoOutput(true);
-//            //conn.connect();
-//
-//            try(OutputStream os = conn.getOutputStream()) {
-//                byte[] input = jsonInputString.getBytes("utf-8");
-//                os.write(input, 0, input.length);
-//                //os.flush();
-//                //os.close();
-//            }
-//
-//            //THE ISSUE IS HERE SOMEWHERE
-//            try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
-//                StringBuilder response = new StringBuilder();
-//                String responseLine = null;
-//                while ((responseLine = br.readLine()) != null) {
-//                    response.append(responseLine.trim());
-//                }
-//                Log.e(TAG, response.toString());
-//                return response.toString();
-//            }
-//
-//        } catch (MalformedURLException e) {
-//            Log.e(TAG, "MalformedURLException: " + e.getMessage());
-//        } catch (ProtocolException e) {
-//            Log.e(TAG, "ProtocolException: " + e.getMessage());
-//        } catch (IOException e) {
-//            Log.e(TAG, "IOException: " + e.getMessage());
-//        } catch (Exception e) {
-//            Log.e(TAG, "Exception: " + e.getMessage());
-//        }
-//        return null;
     }
 
+    /**
+     * Converts an inputstream to an easy to read string
+     * @param is
+     * @return the converted string
+     */
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();

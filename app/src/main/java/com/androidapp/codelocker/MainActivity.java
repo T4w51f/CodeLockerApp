@@ -1,4 +1,4 @@
-package com.stud10.codelocker;
+package com.androidapp.codelocker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,15 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private int loginAttempts = 5;
     private int reloginWaitTime = 180000; //ms
 
-    //endpoints
-//    private static String baseUrl = "http://192.168.0.19:3002";
-//    private static String getUser = "/get_users";
-//    private static String createUser = "/create_users";
-//    private static String userCount = "/user_count";
-//    private static String getPassword = "/password";
-//    private static String usernameOccurrence = "/username_occurrence";
-//    private static String emailOccurrence = "/email_occurrence";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -46,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login_page);
     }
 
+    /***
+     * Task executed upon selecting the Login button
+     * @param view
+     */
     public void login(View view) {
         this.username = (EditText) findViewById(R.id.username);
         this.password = (EditText) findViewById(R.id.password);
@@ -86,38 +81,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void incorrectPasswordError(){
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        password.startAnimation(shake);
-        password.setError("Password is incorrect");
-    }
-
-    private void incorrectUsernameError(){
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        username.startAnimation(shake);
-        username.setError("This Username does not exist");
-    }
-
-    private void incorrectEmailError(){
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        email.startAnimation(shake);
-        email.setError("The email entered is invalid");
-    }
-
+    /***
+     * Directs user to the account registration page
+     * @param view
+     */
     public void goToRegister(View view) {
         setContentView(R.layout.registration_page);
     }
 
+    /***
+     * Directs user to the login page
+     * @param view
+     */
     public void returnToLogin(View view) {
         setContentView(R.layout.login_page);
     }
 
+    /***
+     * Task executed upon selecting the registration button
+     * @param view
+     */
     public void register(View view) {
         EditText reg_username = (EditText) findViewById(R.id.username);
         EditText reg_password = (EditText) findViewById(R.id.password);
         EditText firstname = (EditText) findViewById(R.id.firstname);
         EditText lastname = (EditText) findViewById(R.id.lastname);
         this.email = (EditText) findViewById(R.id.email);
+
+        //Temporary fix
+        overrideNetworkThreadPolicy();
 
         if(
                 reg_username.getText().toString().equals("") ||
@@ -140,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        //Temporary fix
-        overrideNetworkThreadPolicy();
 
         //Flags to verify if existing users have the same username or email ID
         boolean emailAvailable = !emailExists(email.getText().toString());
@@ -167,6 +157,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /***
+     * Validates the email formatting but not its existence
+     * @param email
+     * @return true if email is formatted correctly otherwise false
+     */
     private boolean emailFormatCheck(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
         if(!email.matches(regex)){
@@ -176,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /***
+     * Deduces the number of username in the database with the same username argument
+     * @param endpointUsername
+     * @return The integer number of the username that matches
+     */
     public int getUsernameCount(String endpointUsername){
         // Making a request to url and getting response
         String url = RestApiUrl.USERNAMEOCCURRENCE.endpoint(endpointUsername);
@@ -187,6 +187,11 @@ public class MainActivity extends AppCompatActivity {
         return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count"));
     }
 
+    /***
+     * Deduces the number of email in the database with the same email argument
+     * @param endpointEmail
+     * @return The integer number of the email that matches
+     */
     public int getEmailCount(String endpointEmail){
         // Making a request to url and getting response
         String url = RestApiUrl.EMAILOCCURRENCE.endpoint(endpointEmail);
@@ -198,6 +203,12 @@ public class MainActivity extends AppCompatActivity {
         return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count"));
     }
 
+    /***
+     * Validates the password for a given user against the database
+     * @param username The non-null account username
+     * @param password The non-null account password
+     * @return A non-zero number if the password matches the username
+     */
     public int getPassword(String username, String password){
         // Making a request to url and getting response
         String url = RestApiUrl.GETPASSWORD.endpoint(username, password);
@@ -209,21 +220,42 @@ public class MainActivity extends AppCompatActivity {
         return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count"));
     }
 
+    /***
+     * Checks if username already exists in the database
+     * @param username
+     * @return True if it exists otherwise false
+     */
     public boolean userExists(String username){
         int count = getUsernameCount(username);
         return (count > 0);
     }
 
+    /***
+     * Checks in email already exists in the database
+     * @param email
+     * @return True if it exists otherwise false
+     */
     public boolean emailExists(String email){
         int count = getEmailCount(email);
         return (count > 0);
     }
 
+    /***
+     * Checks if password entered belongs to the specific user
+     * by matching against the database
+     * @param username
+     * @param password
+     * @return True if password and username entered are correct
+     */
     public boolean checkPassword(String username, String password){
         int count = getPassword(username, password);
         return (count > 0);
     }
 
+    /***
+     * Gets the primary key ID for a new entry in the user database
+     * @return The non-null integer primary key ID
+     */
     public int getNextUserIdKey(){
         // Making a request to url and getting response
         String url = RestApiUrl.USERCOUNT.endpoint();
@@ -235,6 +267,15 @@ public class MainActivity extends AppCompatActivity {
         return Integer.valueOf(jsonResponseMap(jsonResponseKeys, jsonStr).get("count")) + 1;
     }
 
+    /***
+     * Creates a new user entry in the database
+     * @param firstname
+     * @param lastname
+     * @param reg_username
+     * @param reg_password
+     * @param email
+     * @return True if the user entry is successfully created, otherwise false
+     */
     public boolean createUser(String firstname, String lastname, String reg_username, String reg_password, String email){
         Timestamp created_at = getTimestamp();
         Timestamp updated_at = getTimestamp();
@@ -291,6 +332,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Calls the appropriate REST endpoint to obtain data from the database
+     * @param url
+     * @param httpMethodType
+     * @param requestBody
+     * @return a JSON response from the endpoint call
+     */
     public String httpResponseString(String url, String httpMethodType, String requestBody){
         HttpHandler sh = new HttpHandler();
         String jsonStr;
@@ -312,11 +360,20 @@ public class MainActivity extends AppCompatActivity {
         return ts;
     }
 
+    /***
+     * Temporary fix to avoid Network Thread Policy Exception
+     */
     private void overrideNetworkThreadPolicy() {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
 
+    /***
+     * Maps the JSON response into a map with desired keys
+     * @param jsonKeysMap
+     * @param jsonStr
+     * @return A map pairing the values for the desired keys from the JSON response
+     */
     private HashMap<String, String> jsonResponseMap (HashMap<String, String> jsonKeysMap, String jsonStr){
         Log.e(TAG, "Response from url: " + jsonStr);
         if (jsonStr != null) {
@@ -354,6 +411,33 @@ public class MainActivity extends AppCompatActivity {
         return jsonKeysMap;
     }
 
+    /***
+     * Animation settings when incorrect password is entered
+     */
+    private void incorrectPasswordError(){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        password.startAnimation(shake);
+        password.setError("Password is incorrect");
+    }
+
+    /***
+     * Animation settings when incorrect username is entered
+     */
+    private void incorrectUsernameError(){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        username.startAnimation(shake);
+        username.setError("This Username does not exist");
+    }
+
+    /***
+     * Animation settings when incorrect email is entered
+     */
+    private void incorrectEmailError(){
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        email.startAnimation(shake);
+        email.setError("The email entered is invalid");
+    }
+
     //TODO clean up code
     //TODO verify email address
     //TODO confirmation email
@@ -362,4 +446,5 @@ public class MainActivity extends AppCompatActivity {
     //TODO create more classes to split the functions
     //TODO strings should be in one file
     //TODO server disconnection causes freeze
+    //TODO handly null response from rest call
 }
