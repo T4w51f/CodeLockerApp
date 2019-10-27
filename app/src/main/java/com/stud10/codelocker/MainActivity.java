@@ -11,7 +11,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.JsonObject;
 import org.json.JSONException;
@@ -31,13 +30,13 @@ public class MainActivity extends AppCompatActivity {
     private int reloginWaitTime = 180000; //ms
 
     //endpoints
-    private static String baseUrl = "http://192.168.0.19:3002";
-    private static String getUser = "/get_users";
-    private static String createUser = "/create_users";
-    private static String userCount = "/user_count";
-    private static String getPassword = "/password";
-    private static String usernameOccurrence = "/username_occurrence";
-    private static String emailOccurrence = "/email_occurrence";
+//    private static String baseUrl = "http://192.168.0.19:3002";
+//    private static String getUser = "/get_users";
+//    private static String createUser = "/create_users";
+//    private static String userCount = "/user_count";
+//    private static String getPassword = "/password";
+//    private static String usernameOccurrence = "/username_occurrence";
+//    private static String emailOccurrence = "/email_occurrence";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int getUsernameCount(String endpointUsername){
         // Making a request to url and getting response
-        String url = baseUrl + usernameOccurrence + "/" + endpointUsername;
+        String url = RestApiUrl.USERNAMEOCCURRENCE.endpoint(endpointUsername);
         String jsonStr = httpResponseString(url, "GET", null);
 
         HashMap<String, String> jsonResponseKeys = new HashMap<>();
@@ -190,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int getEmailCount(String endpointEmail){
         // Making a request to url and getting response
-        String url = baseUrl + emailOccurrence + "/" + endpointEmail;
+        String url = RestApiUrl.EMAILOCCURRENCE.endpoint(endpointEmail);
         String jsonStr = httpResponseString(url, "GET", null);
 
         HashMap<String, String> jsonResponseKeys = new HashMap<>();
@@ -201,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int getPassword(String username, String password){
         // Making a request to url and getting response
-        String url = baseUrl + getPassword + "/" + username + "/" + password;
+        String url = RestApiUrl.GETPASSWORD.endpoint(username, password);
         String jsonStr = httpResponseString(url, "GET", null);
 
         HashMap<String, String> jsonResponseKeys = new HashMap<>();
@@ -227,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int getNextUserIdKey(){
         // Making a request to url and getting response
-        String url = baseUrl + userCount;
+        String url = RestApiUrl.USERCOUNT.endpoint();
         String jsonStr = httpResponseString(url, "GET", null);
 
         HashMap<String, String> jsonResponseKeys = new HashMap<>();
@@ -256,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
 
         //endpoint
         // Making a request to url and getting response
-        String url = baseUrl + createUser;
+        String url = RestApiUrl.CREATEUSER.endpoint();
 
         String id = String.valueOf(getNextUserIdKey());
         //requestBody
@@ -358,12 +357,9 @@ public class MainActivity extends AppCompatActivity {
     //TODO clean up code
     //TODO verify email address
     //TODO confirmation email
-    //TODO error handling
     //TODO rerun server upon failure
     //TODO change password for existing user
     //TODO create more classes to split the functions
-    //TODO success message upon account registration
-    //TODO null handling, e.g. login crashes
     //TODO strings should be in one file
     //TODO server disconnection causes freeze
 }
