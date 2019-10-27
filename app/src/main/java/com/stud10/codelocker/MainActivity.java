@@ -47,10 +47,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login_page);
     }
 
-    public void login(View view) throws InterruptedException, JSONException {
+    public void login(View view) {
         this.username = (EditText) findViewById(R.id.username);
         this.password = (EditText) findViewById(R.id.password);
         final Button log = (Button) findViewById(R.id.login);
+
+        if(username.getText().toString().equals("") || password.getText().toString().equals("")) {
+            Toast.makeText(MainActivity.this, "Please fill in both fields", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         //temporary fix
         overrideNetworkThreadPolicy();
@@ -114,6 +119,17 @@ public class MainActivity extends AppCompatActivity {
         EditText firstname = (EditText) findViewById(R.id.firstname);
         EditText lastname = (EditText) findViewById(R.id.lastname);
         this.email = (EditText) findViewById(R.id.email);
+
+        if(
+                reg_username.getText().toString().equals("") ||
+                reg_password.getText().toString().equals("") ||
+                firstname.getText().toString().equals("") ||
+                lastname.getText().toString().equals("") ||
+                email.getText().toString().equals("")
+        ) {
+            Toast.makeText(MainActivity.this, "Please fill in all fields", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         //check username availability
         boolean usernameAvailable = !userExists(reg_username.getText().toString());
@@ -223,12 +239,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean createUser(String firstname, String lastname, String reg_username, String reg_password, String email){
         Timestamp created_at = getTimestamp();
         Timestamp updated_at = getTimestamp();
-        UUID userID = null;
+        UUID userID;
 
         //count user, add one, make that id
 
         //Generating UUID
-        byte[] bytes = new byte[0];
+        byte[] bytes;
         try {
             bytes = reg_username.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -256,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
 
         String requestBody = gson.toString();
         String jsonStr = httpResponseString(url, "POST", requestBody);
-        String response = null;
 
         Log.e(TAG, "Response from url: " + jsonStr);
         if (jsonStr != null) {
@@ -279,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String httpResponseString(String url, String httpMethodType, String requestBody){
         HttpHandler sh = new HttpHandler();
-        String jsonStr = null;
+        String jsonStr;
         if(httpMethodType.equals("GET")) jsonStr = sh.makeGetServiceCall(url);
         else if(httpMethodType.equals("POST")) jsonStr = sh.makePostServiceCall(url, requestBody);
         else jsonStr = "INCORRECT HTTP METHOD TYPE";
