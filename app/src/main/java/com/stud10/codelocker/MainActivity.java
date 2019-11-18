@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +31,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = HttpHandler.class.getSimpleName();
     EditText username, password, email;
+    private String user_id;
     private int loginAttempts = 5;
     private int reloginWaitTime = 180000; //ms
 
@@ -43,29 +46,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //setContentView(R.layout.activity_main);
-        //setContentView(R.layout.login_page);
-
-        setContentView(R.layout.recycler_layout);
-        Log.d("RecyclerView", "onCreate: started.");
-        initRVLists();
-
+        setContentView(R.layout.login_page);
     }
 
-    private void initRVLists(){
+    private void runContentPage(){
+        setContentView(R.layout.recycler_layout);
+        Log.d("RecyclerView", "onCreate: started.");
+        try {
+            initRVLists();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initRVLists() throws JSONException {
         Log.d("RecyclerView", "onCreate: init RVLists.");
 
-        //TODO set up all the lists
-        appList.add("1");
-        appList.add("2");
-        appList.add("3");
+        overrideNetworkThreadPolicy();
+        String url = RestApiUrl.CREDENTIALS.endpoint(user_id);
+        String jsonResponse = httpResponseString(url, "GET", null);
 
-        usernameList.add("a");
-        usernameList.add("b");
-        usernameList.add("c");
+        if(jsonResponse != "[]"){
+            JSONArray jsonCredentialsMap = new JSONArray(jsonResponse);
 
-        pwdList.add("x");
-        pwdList.add("y");
-        pwdList.add("z");
+            for(int i = 0; i < jsonCredentialsMap.length(); i++){
+                JSONObject credentials = jsonCredentialsMap.getJSONObject(i);
+                appList.add(credentials.get("app_name").toString());
+                usernameList.add(credentials.get("username").toString());
+                pwdList.add(credentials.get("password").toString());
+            }
+        }
 
         initRecyclerView();
     }
@@ -100,7 +110,14 @@ public class MainActivity extends AppCompatActivity {
 
         if(userExists && correctPass){
             loginAttempts = 5;
-            setContentView(R.layout.activity_main);
+
+            try {
+                this.user_id = getUserUUID(username.getText().toString(), password.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            runContentPage();
         } else if(!userExists){
             incorrectUsernameError();
         } else if(!correctPass) {
@@ -120,6 +137,13 @@ public class MainActivity extends AppCompatActivity {
                 }, reloginWaitTime);
             }
         }
+    }
+
+    private String getUserUUID(String username, String password) throws JSONException {
+        String url = RestApiUrl.USERID.endpoint(username, password);
+        String jsonStr = httpResponseString(url, "GET", null);
+        JSONObject jsonObject =  new JSONObject(jsonStr);
+        return String.valueOf(jsonObject.get("user_id"));
     }
 
     /***
