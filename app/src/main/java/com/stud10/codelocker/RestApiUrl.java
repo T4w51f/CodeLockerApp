@@ -1,4 +1,4 @@
-package com.androidapp.codelocker;
+package com.stud10.codelocker;
 
 enum RestApiUrl {
 

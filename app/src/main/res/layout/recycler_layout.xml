@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="195dp"
+        android:layout_height="45dp"
+        android:text="App"
+        android:textStyle="bold"
+        android:textSize="15pt"
+        android:background="#ff8a1c" />
+
+    <Button
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="205dp"
+        android:layout_width="202dp"
+        android:layout_height="45dp"
+        android:text="Username"
+        android:textStyle="bold"
+        android:textSize="15pt"
+        android:background="#ff8a1c" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="70dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recycler_view"/>
+
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.androidapp.codelocker;
+package com.stud10.codelocker;
 
 import android.util.Log;
 
@@ -59,7 +59,7 @@ public class HttpHandler {
         try {
             String charset = "UTF-8";
             URL url = new URL(reqUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            URLConnection connection = url.openConnection();
 
             connection.setDoOutput(true); // Triggers POST.
             connection.setRequestProperty("Accept-Charset", charset);

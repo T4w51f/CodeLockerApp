@@ -1,6 +1,8 @@
-package com.androidapp.codelocker;
+package com.stud10.codelocker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,23 +20,62 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = HttpHandler.class.getSimpleName();;
+    private static final String TAG = HttpHandler.class.getSimpleName();
     EditText username, password, email;
     private int loginAttempts = 5;
     private int reloginWaitTime = 180000; //ms
+
+    //For the recyclerView
+    private ArrayList<String> appList = new ArrayList<>();
+    private ArrayList<String> usernameList = new ArrayList<>();
+    private ArrayList<String> pwdList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.login_page);
+        //setContentView(R.layout.activity_main);
+        //setContentView(R.layout.login_page);
+
+        setContentView(R.layout.recycler_layout);
+        Log.d("RecyclerView", "onCreate: started.");
+        initRVLists();
+
+    }
+
+    private void initRVLists(){
+        Log.d("RecyclerView", "onCreate: init RVLists.");
+
+        //TODO set up all the lists
+        appList.add("1");
+        appList.add("2");
+        appList.add("3");
+
+        usernameList.add("a");
+        usernameList.add("b");
+        usernameList.add("c");
+
+        pwdList.add("x");
+        pwdList.add("y");
+        pwdList.add("z");
+
+        initRecyclerView();
+    }
+
+    private void initRecyclerView(){
+        Log.d("RecyclerView", "onCreate: init RecyclerView.");
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(appList, usernameList, pwdList, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     /***
@@ -96,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
     public void returnToLogin(View view) {
         setContentView(R.layout.login_page);
     }
+
 
     /***
      * Task executed upon selecting the registration button
@@ -447,4 +489,6 @@ public class MainActivity extends AppCompatActivity {
     //TODO strings should be in one file
     //TODO server disconnection causes freeze
     //TODO handly null response from rest call
+    //TODO take largest primary key and not based off count from the db
+    //TODO make everything private
 }
