@@ -13,14 +13,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,13 +43,33 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> usernameList = new ArrayList<>();
     private ArrayList<String> pwdList = new ArrayList<>();
 
+    //For the 'Add new credentials' modal
+    private FloatingActionButton floatingPlus;
+    public EditText newCredentialUsername, getNewCredentialPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
-        //setContentView(R.layout.activity_main);
         setContentView(R.layout.login_page);
+    }
+
+    private void popCredentialsModal(){
+        floatingPlus = findViewById(R.id.fab);
+        newCredentialUsername = findViewById(R.id.new_username);
+        getNewCredentialPassword = findViewById(R.id.new_password);
+
+        floatingPlus.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Log.d(TAG, "onClick: opening dialog");
+                CredentialModal modal = new CredentialModal();
+                modal.show(getSupportFragmentManager(), "CredentialModal");
+            }
+        });
+
+
     }
 
     private void runContentPage(){
@@ -57,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        popCredentialsModal();
     }
 
     private void initRVLists() throws JSONException {
@@ -93,9 +118,9 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void login(View view) {
-        this.username = (EditText) findViewById(R.id.username);
-        this.password = (EditText) findViewById(R.id.password);
-        final Button log = (Button) findViewById(R.id.login);
+        this.username = findViewById(R.id.username);
+        this.password = findViewById(R.id.password);
+        final Button log = findViewById(R.id.login);
 
         if(username.getText().toString().equals("") || password.getText().toString().equals("")) {
             Toast.makeText(MainActivity.this, "Please fill in both fields", Toast.LENGTH_LONG).show();
@@ -168,11 +193,11 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void register(View view) {
-        EditText reg_username = (EditText) findViewById(R.id.username);
-        EditText reg_password = (EditText) findViewById(R.id.password);
-        EditText firstname = (EditText) findViewById(R.id.firstname);
-        EditText lastname = (EditText) findViewById(R.id.lastname);
-        this.email = (EditText) findViewById(R.id.email);
+        EditText reg_username = findViewById(R.id.username);
+        EditText reg_password = findViewById(R.id.password);
+        EditText firstname = findViewById(R.id.firstname);
+        EditText lastname = findViewById(R.id.lastname);
+        this.email = findViewById(R.id.email);
 
         //Temporary fix
         overrideNetworkThreadPolicy();
@@ -351,12 +376,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Generating UUID
         byte[] bytes;
-        try {
-            bytes = reg_username.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return false;
-        }
+        bytes = reg_username.getBytes(StandardCharsets.UTF_8);
         UUID uuid = UUID.nameUUIDFromBytes(bytes);
         userID = uuid;
 
@@ -512,7 +532,7 @@ public class MainActivity extends AppCompatActivity {
     //TODO create more classes to split the functions
     //TODO strings should be in one file
     //TODO server disconnection causes freeze
-    //TODO handly null response from rest call
+    //TODO handle null response from rest call
     //TODO take largest primary key and not based off count from the db
     //TODO make everything private
 }

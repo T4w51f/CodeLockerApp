@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Button
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="70dp"
         android:layout_marginLeft="5dp"
         android:layout_width="195dp"
         android:layout_height="45dp"
@@ -15,7 +15,7 @@
         android:background="#ff8a1c" />
 
     <Button
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="70dp"
         android:layout_marginLeft="205dp"
         android:layout_width="202dp"
         android:layout_height="45dp"
@@ -24,9 +24,19 @@
         android:textSize="15pt"
         android:background="#ff8a1c" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:tint="#ffffff"
+        android:backgroundTint="#0b486b"
+        app:srcCompat="@drawable/ic_plus" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="125dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recycler_view"/>

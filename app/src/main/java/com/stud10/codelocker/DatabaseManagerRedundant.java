@@ -3,6 +3,7 @@ package com.stud10.codelocker;
 import android.os.StrictMode;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -68,12 +69,7 @@ public class DatabaseManagerRedundant {
 
         //Generating UUID
         byte[] bytes = new byte[0];
-        try {
-            bytes = username.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return false;
-        }
+        bytes = username.getBytes(StandardCharsets.UTF_8);
         UUID uuid = UUID.nameUUIDFromBytes(bytes);
         userID = uuid;
 
