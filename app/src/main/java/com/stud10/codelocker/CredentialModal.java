@@ -1,5 +1,6 @@
 package com.stud10.codelocker;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,9 +14,15 @@ import androidx.fragment.app.DialogFragment;
 
 public class CredentialModal extends DialogFragment {
     private static String TAG = "CredentialModal";
-    private EditText username, password;
+    private EditText appname, username, password;
     private TextView cancel, add;
-    private String stringUsername, stringPassword;
+    private String stringAppname, stringUsername, stringPassword;
+
+    public interface OnInputListener{
+        void sendInput(String input, int idx);
+    }
+
+    public OnInputListener oil;
 
     @Nullable
     @Override
@@ -23,6 +30,7 @@ public class CredentialModal extends DialogFragment {
         View view = inflater.inflate(R.layout.add_credentials_modal, container, false);
         cancel = view.findViewById(R.id.cancel);
         add = view.findViewById(R.id.add);
+        appname = view.findViewById(R.id.new_appname);
         username = view.findViewById(R.id.new_username);
         password = view.findViewById(R.id.new_password);
 
@@ -38,17 +46,39 @@ public class CredentialModal extends DialogFragment {
             @Override
             public void onClick(View view){
                 Log.d(TAG, "onClick: opening dialog");
+
+                stringAppname = appname.getText().toString();
                 stringUsername = username.getText().toString();
                 stringPassword = password.getText().toString();
 
-                if(!stringPassword.equals("") && !stringUsername.equals("")){
-                    ((MainActivity)getActivity()).newCredentialUsername.setText(stringUsername);
-                    ((MainActivity)getActivity()).getNewCredentialPassword.setText(stringPassword);
-                }
+//                if(!stringPassword.equals("") && !stringUsername.equals("")){
+//                    ((MainActivity)getActivity()).newCredentialAppname.setText(stringAppname);
+//                    ((MainActivity)getActivity()).newCredentialUsername.setText(stringUsername);
+//                    ((MainActivity)getActivity()).newCredentialPassword.setText(stringPassword);
+//                }
+
+                oil.sendInput(stringAppname, 0);
+                oil.sendInput(stringUsername, 1);
+                oil.sendInput(stringPassword, 2);
+                oil.sendInput("Add Credential to DB", 3);
                 getDialog().dismiss();
             }
         });
 
+        //update main page
+        oil.sendInput("Refresh Contents", 4);
+
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+
+        try{
+            oil = (OnInputListener) getActivity();
+        }catch(ClassCastException e){
+            Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+        }
     }
 }

@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -31,7 +32,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CredentialModal.OnInputListener{
     private static final String TAG = HttpHandler.class.getSimpleName();
     EditText username, password, email;
     private String user_id;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     //For the 'Add new credentials' modal
     private FloatingActionButton floatingPlus;
-    public EditText newCredentialUsername, getNewCredentialPassword;
+    public String newCredentialAppname, newCredentialUsername, newCredentialPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void popCredentialsModal(){
         floatingPlus = findViewById(R.id.fab);
-        newCredentialUsername = findViewById(R.id.new_username);
-        getNewCredentialPassword = findViewById(R.id.new_password);
-
         floatingPlus.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -69,7 +67,76 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Log.d("String", newCredentialAppname.getText().toString());
+        //createCredential(newCredentialAppname.getText().toString(), newCredentialUsername.getText().toString(), newCredentialPassword.getText().toString());
+    }
 
+    public boolean createCredential(){
+//        this.newCredentialAppname = findViewById(R.id.new_appname);
+//        this.newCredentialUsername = findViewById(R.id.new_username);
+//        this.newCredentialPassword = findViewById(R.id.new_password);
+//
+//        String appname = newCredentialAppname.getText().toString();
+//        String username = newCredentialUsername.getText().toString();
+//        String password = newCredentialPassword.getText().toString();
+
+        Timestamp created_at = getTimestamp();
+        Timestamp updated_at = getTimestamp();
+
+        //count user, add one, make that id
+
+        //endpoint
+        // Making a request to url and getting response
+        overrideNetworkThreadPolicy();
+        String url = RestApiUrl.ADDCREDENTIALS.endpoint();
+
+        String id = null;
+        try {
+            id = getNextCredentialIdKey();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //requestBody
+        JsonObject gson = new JsonObject();
+        gson.addProperty("id", id);
+        gson.addProperty("user_id", this.user_id);
+        gson.addProperty("app_name", this.newCredentialAppname);
+        gson.addProperty("username", this.newCredentialUsername);
+        gson.addProperty("password", this.newCredentialPassword);
+        gson.addProperty("created_at", String.valueOf(created_at));
+        gson.addProperty("updated_at", String.valueOf(updated_at));
+
+        String requestBody = gson.toString();
+        String jsonStr = httpResponseString(url, "POST", requestBody);
+
+        Log.e(TAG, "Response from url: " + jsonStr);
+        if (jsonStr != null) {
+            Log.e(TAG, jsonStr);
+            return true;
+
+        } else {
+            Log.e(TAG, "Couldn't get json from server.");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Couldn't get json from server. Check LogCat for possible errors!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+            return false;
+        }
+    }
+
+    private String getNextCredentialIdKey() throws JSONException {
+        // Making a request to url and getting response
+        overrideNetworkThreadPolicy();
+        String url = RestApiUrl.CREDENTIALSCOUNT.endpoint(user_id);
+        String jsonStr = httpResponseString(url, "GET", null);
+        JSONObject jsonObj =  new JSONObject(jsonStr);
+
+        return String.valueOf(Integer.valueOf(jsonObj.get("count").toString()) + 1);
     }
 
     private void runContentPage(){
@@ -77,6 +144,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d("RecyclerView", "onCreate: started.");
         try {
             initRVLists();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        popCredentialsModal();
+    }
+
+    private void refreshContentPage(){
+        setContentView(R.layout.recycler_layout);
+        Log.d("RecyclerView", "onCreate: started.");
+        try {
+            updateRVLists();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -100,6 +179,25 @@ public class MainActivity extends AppCompatActivity {
                 usernameList.add(credentials.get("username").toString());
                 pwdList.add(credentials.get("password").toString());
             }
+        }
+
+        initRecyclerView();
+    }
+
+    private void updateRVLists() throws JSONException {
+        Log.d("RecyclerView", "onCreate: init RVLists.");
+
+        overrideNetworkThreadPolicy();
+        String url = RestApiUrl.CREDENTIALS.endpoint(user_id);
+        String jsonResponse = httpResponseString(url, "GET", null);
+
+        if(jsonResponse != "[]"){
+            JSONArray jsonCredentialsMap = new JSONArray(jsonResponse);
+
+            JSONObject credentials = jsonCredentialsMap.getJSONObject(0);
+            appList.add(credentials.get("app_name").toString());
+            usernameList.add(credentials.get("username").toString());
+            pwdList.add(credentials.get("password").toString());
         }
 
         initRecyclerView();
@@ -524,6 +622,16 @@ public class MainActivity extends AppCompatActivity {
         email.setError("The email entered is invalid");
     }
 
+    @Override
+    public void sendInput(String input, int idx) {
+        Log.d(TAG, "sendInput: got the input: " + input);
+        if(idx == 0) this.newCredentialAppname = input;
+        else if(idx == 1) this.newCredentialUsername = input;
+        else if(idx == 2) this.newCredentialPassword = input;
+        else if(idx == 3) createCredential();
+        else refreshContentPage();
+    }
+
     //TODO clean up code
     //TODO verify email address
     //TODO confirmation email
@@ -535,4 +643,5 @@ public class MainActivity extends AppCompatActivity {
     //TODO handle null response from rest call
     //TODO take largest primary key and not based off count from the db
     //TODO make everything private
+    //TODO Use hash function
 }

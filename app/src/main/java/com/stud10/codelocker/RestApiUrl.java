@@ -11,7 +11,7 @@ enum RestApiUrl {
     EMAILOCCURRENCE ("http://192.168.0.19:3002/email_occurrence"),
     USERID ("http://192.168.0.19:3002/uuid"),
     ADDCREDENTIALS("http://192.168.0.19:3002/add_credentials"),
-    CREDENTIALSCOUNT ("http://192.168.0.19:3002/create_users"),
+    CREDENTIALSCOUNT ("http://192.168.0.19:3002/credentials_count"),
     CREDENTIALS ("http://192.168.0.19:3002/credentials");
 
     private String endpoint;
