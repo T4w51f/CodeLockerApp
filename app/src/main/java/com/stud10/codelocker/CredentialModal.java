@@ -61,12 +61,11 @@ public class CredentialModal extends DialogFragment {
                 oil.sendInput(stringUsername, 1);
                 oil.sendInput(stringPassword, 2);
                 oil.sendInput("Add Credential to DB", 3);
+                oil.sendInput("Refresh Contents", 4);
+
                 getDialog().dismiss();
             }
         });
-
-        //update main page
-        oil.sendInput("Refresh Contents", 4);
 
         return view;
     }

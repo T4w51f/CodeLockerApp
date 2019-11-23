@@ -14,8 +14,8 @@ CREATE TABLE public.app_user
 CREATE TABLE public.platform
 (
     id integer NOT NULL,
-    user_id integer NOT NULL,
-    appname character varying(255) COLLATE pg_catalog."default",
+    user_id uuid NOT NULL,
+    app_name character varying(255) COLLATE pg_catalog."default",
     username character varying(255) COLLATE pg_catalog."default",
     password character varying(255) COLLATE pg_catalog."default",
     created_at timestamp with time zone,

@@ -13,7 +13,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,7 +21,6 @@ import com.google.gson.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
     private ArrayList<String> appList = new ArrayList<>();
     private ArrayList<String> usernameList = new ArrayList<>();
     private ArrayList<String> pwdList = new ArrayList<>();
+    private RecyclerViewAdapter adapter;
 
     //For the 'Add new credentials' modal
     private FloatingActionButton floatingPlus;
@@ -151,18 +150,6 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
         popCredentialsModal();
     }
 
-    private void refreshContentPage(){
-        setContentView(R.layout.recycler_layout);
-        Log.d("RecyclerView", "onCreate: started.");
-        try {
-            updateRVLists();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        popCredentialsModal();
-    }
-
     private void initRVLists() throws JSONException {
         Log.d("RecyclerView", "onCreate: init RVLists.");
 
@@ -185,30 +172,43 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
     }
 
     private void updateRVLists() throws JSONException {
-        Log.d("RecyclerView", "onCreate: init RVLists.");
+        Log.d("RecyclerView", "onAdd: updating RVLists.");
 
         overrideNetworkThreadPolicy();
         String url = RestApiUrl.CREDENTIALS.endpoint(user_id);
         String jsonResponse = httpResponseString(url, "GET", null);
 
+        appList.clear();
+        usernameList.clear();
+        pwdList.clear();
+
         if(jsonResponse != "[]"){
             JSONArray jsonCredentialsMap = new JSONArray(jsonResponse);
 
-            JSONObject credentials = jsonCredentialsMap.getJSONObject(0);
-            appList.add(credentials.get("app_name").toString());
-            usernameList.add(credentials.get("username").toString());
-            pwdList.add(credentials.get("password").toString());
+            for(int i = 0; i < jsonCredentialsMap.length(); i++){
+                JSONObject credentials = jsonCredentialsMap.getJSONObject(i);
+                appList.add(credentials.get("app_name").toString());
+                usernameList.add(credentials.get("username").toString());
+                pwdList.add(credentials.get("password").toString());
+            }
         }
 
-        initRecyclerView();
+        refreshContentPage();
     }
+
+
 
     private void initRecyclerView(){
         Log.d("RecyclerView", "onCreate: init RecyclerView.");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(appList, usernameList, pwdList, this);
+        this.adapter = new RecyclerViewAdapter(appList, usernameList, pwdList, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+
+    private void refreshContentPage() {
+        this.adapter.notifyDataSetChanged();
     }
 
     /***
@@ -629,8 +629,15 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
         else if(idx == 1) this.newCredentialUsername = input;
         else if(idx == 2) this.newCredentialPassword = input;
         else if(idx == 3) createCredential();
-        else refreshContentPage();
+        else {
+            try {
+                updateRVLists();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 
     //TODO clean up code
     //TODO verify email address

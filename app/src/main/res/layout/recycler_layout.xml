@@ -4,7 +4,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button
+    <TextView
+        android:layout_marginTop="70dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/colorAccent"
+        android:background="@drawable/rounded_rectangle" />
+
+    <TextView
         android:layout_marginTop="70dp"
         android:layout_marginLeft="5dp"
         android:layout_width="195dp"
@@ -12,9 +19,9 @@
         android:text="App"
         android:textStyle="bold"
         android:textSize="15pt"
-        android:background="#ff8a1c" />
+        android:textAlignment="center" />
 
-    <Button
+    <TextView
         android:layout_marginTop="70dp"
         android:layout_marginLeft="205dp"
         android:layout_width="202dp"
@@ -22,24 +29,36 @@
         android:text="Username"
         android:textStyle="bold"
         android:textSize="15pt"
-        android:background="#ff8a1c" />
+        android:textAlignment="center" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:layout_marginLeft="350dp"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:tint="#ffffff"
         android:backgroundTint="#0b486b"
+        android:tint="#ffffff"
         app:srcCompat="@drawable/ic_plus" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="#0b486b"
+        android:tint="#ffffff"
+        app:srcCompat="@drawable/ic_logout"
+        android:onClick="returnToLogin"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="125dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recycler_view"/>
+        android:id="@+id/recycler_view" />
 
 
 </RelativeLayout>
