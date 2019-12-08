@@ -3,16 +3,16 @@ package com.stud10.codelocker;
 enum RestApiUrl {
 
     //app_user table
-    GETUSER("http://192.168.0.19:3002/get_users"),
-    CREATEUSER ("http://192.168.0.19:3002/create_users"),
-    USERCOUNT ("http://192.168.0.19:3002/user_count"),
-    GETPASSWORD ("http://192.168.0.19:3002/password"),
-    USERNAMEOCCURRENCE ("http://192.168.0.19:3002/username_occurrence"),
-    EMAILOCCURRENCE ("http://192.168.0.19:3002/email_occurrence"),
-    USERID ("http://192.168.0.19:3002/uuid"),
-    ADDCREDENTIALS("http://192.168.0.19:3002/add_credentials"),
-    CREDENTIALSCOUNT ("http://192.168.0.19:3002/credentials_count"),
-    CREDENTIALS ("http://192.168.0.19:3002/credentials");
+    GETUSER("https://codelocker-android-api.herokuapp.com/get_users"),
+    CREATEUSER ("https://codelocker-android-api.herokuapp.com/create_users"),
+    USERCOUNT ("https://codelocker-android-api.herokuapp.com/user_count"),
+    GETPASSWORD ("https://codelocker-android-api.herokuapp.com/password"),
+    USERNAMEOCCURRENCE ("https://codelocker-android-api.herokuapp.com/username_occurrence"),
+    EMAILOCCURRENCE ("https://codelocker-android-api.herokuapp.com/email_occurrence"),
+    USERID ("https://codelocker-android-api.herokuapp.com/uuid"),
+    ADDCREDENTIALS("https://codelocker-android-api.herokuapp.com/add_credentials"),
+    CREDENTIALSCOUNT ("https://codelocker-android-api.herokuapp.com/credentials_count"),
+    CREDENTIALS ("https://codelocker-android-api.herokuapp.com/credentials");
 
     private String endpoint;
 

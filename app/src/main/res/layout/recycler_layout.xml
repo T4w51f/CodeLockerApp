@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:backgroundTint="@color/colorAccent"
-        android:background="@drawable/rounded_rectangle" />
+        android:background="@drawable/rectangle" />
+
 
     <TextView
         android:layout_marginTop="70dp"
