@@ -72,19 +72,9 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
             }
         });
 
-        //Log.d("String", newCredentialAppname.getText().toString());
-        //createCredential(newCredentialAppname.getText().toString(), newCredentialUsername.getText().toString(), newCredentialPassword.getText().toString());
     }
 
     public boolean createCredential(){
-//        this.newCredentialAppname = findViewById(R.id.new_appname);
-//        this.newCredentialUsername = findViewById(R.id.new_username);
-//        this.newCredentialPassword = findViewById(R.id.new_password);
-//
-//        String appname = newCredentialAppname.getText().toString();
-//        String username = newCredentialUsername.getText().toString();
-//        String password = newCredentialPassword.getText().toString();
-
         Timestamp created_at = getTimestamp();
         Timestamp updated_at = getTimestamp();
 
@@ -288,6 +278,18 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
      * @param view
      */
     public void returnToLogin(View view) {
+        setContentView(R.layout.login_page);
+    }
+
+    /***
+     * Directs user to the login page
+     * @param view
+     */
+    public void logout(View view) {
+        appList.clear();
+        usernameList.clear();
+        pwdList.clear();
+        refreshContentPage();
         setContentView(R.layout.login_page);
     }
 

@@ -52,7 +52,7 @@
         android:backgroundTint="#0b486b"
         android:tint="#ffffff"
         app:srcCompat="@drawable/ic_logout"
-        android:onClick="returnToLogin"/>
+        android:onClick="logout"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="125dp"
