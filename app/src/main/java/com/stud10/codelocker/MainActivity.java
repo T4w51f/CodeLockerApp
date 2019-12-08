@@ -29,9 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
 
 public class MainActivity extends AppCompatActivity implements CredentialModal.OnInputListener{
     private static final String TAG = HttpHandler.class.getSimpleName();
@@ -52,9 +49,6 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppCenter.start(getApplication(), "1552a728-826a-4867-90a3-340b25108775",
-                Analytics.class, Crashes.class);
-
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
