@@ -3,16 +3,16 @@ package com.stud10.codelocker;
 enum RestApiUrl {
 
     //app_user table
-    GETUSER("http://192.168.0.19:3002/get_users"),
-    CREATEUSER ("http://192.168.0.19:3002/create_users"),
-    USERCOUNT ("http://192.168.0.19:3002/user_count"),
-    GETPASSWORD ("http://192.168.0.19:3002/password"),
-    USERNAMEOCCURRENCE ("http://192.168.0.19:3002/username_occurrence"),
-    EMAILOCCURRENCE ("http://192.168.0.19:3002/email_occurrence"),
-    USERID ("http://192.168.0.19:3002/uuid"),
-    ADDCREDENTIALS("http://192.168.0.19:3002/add_credentials"),
-    CREDENTIALSCOUNT ("http://192.168.0.19:3002/credentials_count"),
-    CREDENTIALS ("http://192.168.0.19:3002/credentials");
+    GETUSER("http://192.168.0.19:5000/get_users"),
+    CREATEUSER ("http://192.168.0.19:5000/create_users"),
+    USERCOUNT ("http://192.168.0.19:5000/user_count"),
+    GETPASSWORD ("http://192.168.0.19:5000/password"),
+    USERNAMEOCCURRENCE ("http://192.168.0.19:5000/username_occurrence"),
+    EMAILOCCURRENCE ("http://192.168.0.19:5000/email_occurrence"),
+    USERID ("http://192.168.0.19:5000/uuid"),
+    ADDCREDENTIALS("http://192.168.0.19:5000/add_credentials"),
+    CREDENTIALSCOUNT ("http://192.168.0.19:5000/credentials_count"),
+    CREDENTIALS ("http://192.168.0.19:5000/credentials");
 
     private String endpoint;
 
