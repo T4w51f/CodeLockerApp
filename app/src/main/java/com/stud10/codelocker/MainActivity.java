@@ -23,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -219,7 +221,17 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
         overrideNetworkThreadPolicy();
 
         boolean userExists = userExists(username.getText().toString());
-        boolean correctPass = checkPassword(username.getText().toString(), password.getText().toString());
+
+        boolean correctPass = false;
+        try {
+            correctPass = checkPassword(username.getText().toString(), password.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
         if(userExists && correctPass){
             loginAttempts = 5;
@@ -227,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
             try {
                 this.user_id = getUserUUID(username.getText().toString(), password.getText().toString());
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
                 e.printStackTrace();
             }
 
@@ -252,8 +268,13 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
         }
     }
 
-    private String getUserUUID(String username, String password) throws JSONException {
-        String url = RestApiUrl.USERID.endpoint(username, password);
+    private String getUserUUID(String username, String password) throws JSONException, NoSuchAlgorithmException, InvalidKeySpecException {
+        overrideNetworkThreadPolicy();
+        PasswordHashPBKDF2 pwdHashFunction = new PasswordHashPBKDF2();
+        String salt = getSalt(username);
+        String hashedPassword = pwdHashFunction.checkPassHash(password, salt);
+
+        String url = RestApiUrl.USERID.endpoint(username, hashedPassword);
         String jsonStr = httpResponseString(url, "GET", null);
         JSONObject jsonObject =  new JSONObject(jsonStr);
         return String.valueOf(jsonObject.get("user_id"));
@@ -293,11 +314,28 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
      * @param view
      */
     public void register(View view) {
+        PasswordHashPBKDF2 pwdHashFunction = null;
+        String hashedPassword = null;
+
+        try {
+            pwdHashFunction = new PasswordHashPBKDF2();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
         EditText reg_username = findViewById(R.id.username);
         EditText reg_password = findViewById(R.id.password);
         EditText firstname = findViewById(R.id.firstname);
         EditText lastname = findViewById(R.id.lastname);
         this.email = findViewById(R.id.email);
+
+        try {
+            hashedPassword = pwdHashFunction.hashPBKDF2(reg_password.getText().toString());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
 
         //Temporary fix
         overrideNetworkThreadPolicy();
@@ -331,8 +369,9 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
             boolean userAccountCreatedFlag = createUser(firstname.getText().toString(),
                     lastname.getText().toString(),
                     reg_username.getText().toString(),
-                    reg_password.getText().toString(),
-                    email.getText().toString());
+                    hashedPassword,
+                    email.getText().toString(),
+                    pwdHashFunction.storeSalt());
 
 
             if(userAccountCreatedFlag){
@@ -438,9 +477,22 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
      * @param password
      * @return True if password and username entered are correct
      */
-    public boolean checkPassword(String username, String password){
-        int count = getPassword(username, password);
+    public boolean checkPassword(String username, String password) throws JSONException, InvalidKeySpecException, NoSuchAlgorithmException {
+        overrideNetworkThreadPolicy();
+        PasswordHashPBKDF2 pwdHashFunction = new PasswordHashPBKDF2();
+        String salt = getSalt(username);
+        String hashedPassword = pwdHashFunction.checkPassHash(password, salt);
+        int count = getPassword(username, hashedPassword);
         return (count > 0);
+    }
+
+    private String getSalt(String username) throws JSONException {
+        String url = RestApiUrl.SALT.endpoint(username);
+        String jsonStr = httpResponseString(url, "GET", null);
+
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        String salt = jsonObject.getString("salt");
+        return salt;
     }
 
     /***
@@ -467,7 +519,7 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
      * @param email
      * @return True if the user entry is successfully created, otherwise false
      */
-    public boolean createUser(String firstname, String lastname, String reg_username, String reg_password, String email){
+    public boolean createUser(String firstname, String lastname, String reg_username, String reg_password, String email, String salt){
         Timestamp created_at = getTimestamp();
         Timestamp updated_at = getTimestamp();
         UUID userID;
@@ -495,6 +547,7 @@ public class MainActivity extends AppCompatActivity implements CredentialModal.O
         gson.addProperty("updated_at", String.valueOf(updated_at));
         gson.addProperty("username", reg_username);
         gson.addProperty("user_id", String.valueOf(userID));
+        gson.addProperty("salt", salt);
 
         String requestBody = gson.toString();
         String jsonStr = httpResponseString(url, "POST", requestBody);

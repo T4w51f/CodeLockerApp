@@ -12,7 +12,8 @@ enum RestApiUrl {
     USERID ("https://codelocker-android-api.herokuapp.com/uuid"),
     ADDCREDENTIALS("https://codelocker-android-api.herokuapp.com/add_credentials"),
     CREDENTIALSCOUNT ("https://codelocker-android-api.herokuapp.com/credentials_count"),
-    CREDENTIALS ("https://codelocker-android-api.herokuapp.com/credentials");
+    CREDENTIALS ("https://codelocker-android-api.herokuapp.com/credentials"),
+    SALT ("https://codelocker-android-api.herokuapp.com/salt");
 
     private String endpoint;
 
